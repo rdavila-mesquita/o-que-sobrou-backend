@@ -10,91 +10,112 @@ API do **O que sobrou**, um app que vai gerar receitas com inteligência artific
 
 ## ✅ O que já funciona
 
-- Cadastro de usuário (signup)
-- Login (signin) com JWT
-- Refresh token para renovar a sessão
-- Rotas protegidas por autenticação
-- Modelagem completa do banco de dados com Prisma
-- Ambiente de banco de dados containerizado com Docker
+- Cadastro de usuário (`signup`) com senha protegida por hash (argon2)
+- Login (`signin`) com JWT (access token de 15 minutos)
+- Rotas protegidas por autenticação (guard com Bearer token)
+- Validação dos dados de entrada (class-validator)
+- Modelagem completa do banco de dados com Prisma: usuários, perfil de saúde, catálogo de ingredientes com valores nutricionais, receitas, favoritos e auditoria das gerações
+- Serviço de refresh token implementado e com testes unitários (hash SHA-256, expiração, revogação e rotação)
 
 ## 🔜 Próximos passos
 
+- [ ] Gravar o refresh token no login e expor a rota `/auth/refresh`
+- [ ] Popular o catálogo de ingredientes (base TACO) com seed
 - [ ] Integração com IA para gerar receitas a partir dos ingredientes
-- [ ] Cálculo e exibição do valor nutricional
-- [ ] Considerar condições de saúde do usuário (ex.: diabetes) na geração
+- [ ] Cálculo do valor nutricional pelo backend (e não pela IA)
+- [ ] Validador de segurança considerando condições de saúde e alérgenos (ex.: diabetes)
 - [ ] Histórico e favoritos de receitas
-- [ ] Testes automatizados
+- [ ] Ampliar os testes automatizados
 - [ ] Deploy
+
+## 🧠 Decisões de projeto
+
+- **A IA sugere a receita, o backend calcula a nutrição.** Cada ingrediente guarda seus valores por 100 g, as quantidades são convertidas para gramas e a nutrição por porção é calculada no servidor, com um campo de cobertura que indica quando o valor é apenas estimado.
+- **Perfil de saúde no cadastro.** Condições de saúde, alérgenos (exclusão rígida), preferências alimentares e aceite do aviso de que o app não substitui acompanhamento médico ou nutricional.
+- **Auditoria das gerações.** Cada geração registra os ingredientes enviados, uma cópia do perfil de saúde da época, as tentativas e o resultado da validação.
 
 ## 🛠️ Stack
 
 - [NestJS](https://nestjs.com/) + TypeScript
-- [Prisma](https://www.prisma.io/) (ORM)
+- [Prisma 8](https://www.prisma.io/) (ORM, versão candidata)
 - [PostgreSQL](https://www.postgresql.org/)
 - [Docker](https://www.docker.com/) + Docker Compose
-- JWT (access token + refresh token)
+- JWT (access token) + refresh token com hash no banco
+- Jest (testes)
+- pnpm
 
 ## 📋 Pré-requisitos
 
-- Node.js 20+
-- npm
-- Docker e Docker Compose
+- Node.js 22.18+ (ou 24.11+)
+- pnpm
+- PostgreSQL rodando (o projeto usa a porta `5433` por padrão)
+- Docker e Docker Compose (opcional, para rodar a API em container)
 
 ## 🚀 Como rodar
 
 ```bash
 # 1. Clone o repositório
-git clone https://github.com/SEU_USUARIO/o-que-sobrou-backend.git
+git clone https://github.com/rdavila-mesquita/o-que-sobrou-backend.git
 cd o-que-sobrou-backend
 
 # 2. Configure as variáveis de ambiente
 cp .env.example .env
-# edite o .env com suas credenciais
+# edite o .env com suas credenciais e defina os segredos JWT
 
-# 3. Suba o banco de dados com Docker
-docker compose up -d
+# 3. Instale as dependências
+pnpm install
 
-# 4. Instale as dependências
-npm install
+# 4. Gere os artefatos do contrato do Prisma
+pnpm run contract:emit
 
 # 5. Rode as migrations
-npx prisma migrate dev
+pnpm run migrate
 
 # 6. Inicie a API em modo desenvolvimento
-npm run start:dev
+pnpm run dev
 ```
 
-A API sobe em `http://localhost:3000` e o PostgreSQL em `localhost:5433`.
+A API sobe em `http://localhost:3000`.
 
-### Comandos úteis do Docker
+### Rodando os testes
 
 ```bash
-docker compose up -d      # sobe os containers em segundo plano
-docker compose down       # para e remove os containers (mantém os dados)
-docker compose down -v    # para e apaga também o volume do banco
-docker compose logs -f    # acompanha os logs
+pnpm test
+```
+
+### Rodando a API com Docker
+
+O `docker-compose.yml` sobe apenas a **API**. Ela se conecta ao PostgreSQL que está rodando na sua máquina, na porta `5433`.
+
+```bash
+docker compose up -d --build   # builda e sobe a API em segundo plano
+docker compose logs -f         # acompanha os logs
+docker compose down            # para e remove o container
 ```
 
 ## 🔐 Variáveis de ambiente
 
-| Variável             | Descrição                                |
-| -------------------- | ---------------------------------------- |
-| `POSTGRES_USER`      | Usuário do PostgreSQL (container)        |
-| `POSTGRES_PASSWORD`  | Senha do PostgreSQL (container)          |
-| `POSTGRES_DB`        | Nome do banco                            |
-| `DATABASE_URL`       | String de conexão usada pela API         |
-| `PORT`               | Porta da API (padrão: 3000)              |
-| `JWT_SECRET`         | Segredo para assinar o access token      |
-| `JWT_REFRESH_SECRET` | Segredo para assinar o refresh token     |
+| Variável             | Descrição                                                |
+| -------------------- | -------------------------------------------------------- |
+| `POSTGRES_USER`      | Usuário do PostgreSQL                                    |
+| `POSTGRES_PASSWORD`  | Senha do PostgreSQL (também usada pelo Docker Compose)   |
+| `POSTGRES_DB`        | Nome do banco                                            |
+| `DATABASE_URL`       | String de conexão usada pela API                         |
+| `PORT`               | Porta da API (padrão: 3000)                              |
+| `JWT_SECRET`         | Segredo para assinar o access token                      |
+| `JWT_REFRESH_SECRET` | Segredo reservado para o refresh token                   |
+
+> Nunca faça commit do arquivo `.env`.
 
 ## 📡 Endpoints
 
-| Método | Rota             | Descrição                    | Auth |
-| ------ | ---------------- | ---------------------------- | ---- |
-| POST   | `/auth/signup`   | Cadastra um novo usuário     | Não  |
-| POST   | `/auth/signin`   | Autentica e retorna tokens   | Não  |
-| POST   | `/auth/refresh`  | Renova o access token        | Não  |
-| GET    | `/me`            | Rota protegida de exemplo    | Sim  |
+| Método | Rota            | Descrição                         | Auth |
+| ------ | --------------- | --------------------------------- | ---- |
+| POST   | `/auth/signup`  | Cadastra um novo usuário          | Não  |
+| POST   | `/auth/signin`  | Autentica e retorna o access token | Não  |
+| GET    | `/auth/me`      | Retorna os dados do usuário logado | Sim  |
+
+🚧 A rota `/auth/refresh` será adicionada junto com a gravação do refresh token no login.
 
 ## 👩‍💻 Autora
 
