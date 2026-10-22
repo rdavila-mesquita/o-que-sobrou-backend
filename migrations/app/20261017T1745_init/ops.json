@@ -1,0 +1,1633 @@
+[
+  {
+    "id": "schema.public",
+    "label": "Create schema \"public\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres"
+    },
+    "precheck": [],
+    "execute": [
+      {
+        "description": "Create schema \"public\"",
+        "sql": "CREATE SCHEMA IF NOT EXISTS \"public\"",
+        "params": []
+      }
+    ],
+    "postcheck": []
+  },
+  {
+    "id": "table.favorites",
+    "label": "Create table \"favorites\"",
+    "summary": "Creates table \"favorites\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "favorites"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"favorites\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"favorites\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"favorites\"",
+        "sql": "CREATE TABLE \"public\".\"favorites\" (\n  \"created_at\" timestamptz DEFAULT (now()) NOT NULL,\n  \"recipe_id\" text NOT NULL,\n  \"user_id\" text NOT NULL,\n  PRIMARY KEY (\"user_id\", \"recipe_id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"favorites\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"favorites\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.generation_requests",
+    "label": "Create table \"generation_requests\"",
+    "summary": "Creates table \"generation_requests\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "generation_requests"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"generation_requests\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"generation_requests\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"generation_requests\"",
+        "sql": "CREATE TABLE \"public\".\"generation_requests\" (\n  \"attempts\" int4 DEFAULT 0 NOT NULL,\n  \"completion_tokens\" int4,\n  \"created_at\" timestamptz DEFAULT (now()) NOT NULL,\n  \"error_message\" text,\n  \"finished_at\" timestamptz,\n  \"health_snapshot\" json,\n  \"id\" text NOT NULL,\n  \"input_ingredients\" text[] NOT NULL,\n  \"model\" text,\n  \"prompt_tokens\" int4,\n  \"status\" text DEFAULT 'PENDING' NOT NULL,\n  \"user_id\" text NOT NULL,\n  \"validation_report\" json,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"generation_requests_input_ingredients_elem_not_null_686267ba\" CHECK (array_position(\"input_ingredients\", NULL) IS NULL),\n  CONSTRAINT \"generation_requests_status_check_4bc8cb75\" CHECK (\"status\" IN ('PENDING', 'SUCCEEDED', 'REJECTED_BY_SAFETY', 'FAILED'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"generation_requests\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"generation_requests\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.health_profiles",
+    "label": "Create table \"health_profiles\"",
+    "summary": "Creates table \"health_profiles\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "health_profiles"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"health_profiles\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"health_profiles\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"health_profiles\"",
+        "sql": "CREATE TABLE \"public\".\"health_profiles\" (\n  \"allergens\" text[] NOT NULL,\n  \"conditions\" text[] NOT NULL,\n  \"created_at\" timestamptz DEFAULT (now()) NOT NULL,\n  \"daily_calorie_target\" int4,\n  \"dietary_preferences\" text[] NOT NULL,\n  \"disclaimer_accepted_at\" timestamptz,\n  \"disliked_ingredients\" text[] NOT NULL,\n  \"id\" text NOT NULL,\n  \"notes\" text,\n  \"updated_at\" timestamptz NOT NULL,\n  \"user_id\" text NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"health_profiles_allergens_check_541456a1\" CHECK (array_remove(\"allergens\"::text[], NULL) <@ ARRAY['GLUTEN', 'LACTOSE', 'LEITE', 'OVO', 'AMENDOIM', 'CASTANHAS', 'SOJA', 'PEIXE', 'CRUSTACEOS', 'GERGELIM']::text[]),\n  CONSTRAINT \"health_profiles_allergens_elem_not_null_a997b371\" CHECK (array_position(\"allergens\", NULL) IS NULL),\n  CONSTRAINT \"health_profiles_conditions_check_c1aeaad3\" CHECK (array_remove(\"conditions\"::text[], NULL) <@ ARRAY['DIABETES_TIPO_1', 'DIABETES_TIPO_2', 'PRE_DIABETES', 'HIPERTENSAO', 'COLESTEROL_ALTO', 'DOENCA_RENAL', 'DOENCA_CELIACA', 'INTOLERANCIA_LACTOSE', 'GOTA', 'GASTRITE_REFLUXO']::text[]),\n  CONSTRAINT \"health_profiles_conditions_elem_not_null_7c338730\" CHECK (array_position(\"conditions\", NULL) IS NULL),\n  CONSTRAINT \"health_profiles_dietary_preferences_check_44038eb5\" CHECK (array_remove(\"dietary_preferences\"::text[], NULL) <@ ARRAY['VEGETARIANO', 'VEGANO', 'SEM_CARNE_VERMELHA', 'SEM_PORCO', 'LOW_CARB', 'ALTA_PROTEINA']::text[]),\n  CONSTRAINT \"health_profiles_dietary_preferences_elem_not_null_71949628\" CHECK (array_position(\"dietary_preferences\", NULL) IS NULL),\n  CONSTRAINT \"health_profiles_disliked_ingredients_elem_not_null_3fc5c9e2\" CHECK (array_position(\"disliked_ingredients\", NULL) IS NULL)\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"health_profiles\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"health_profiles\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.ingredients",
+    "label": "Create table \"ingredients\"",
+    "summary": "Creates table \"ingredients\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "ingredients"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"ingredients\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ingredients\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"ingredients\"",
+        "sql": "CREATE TABLE \"public\".\"ingredients\" (\n  \"aliases\" text[] NOT NULL,\n  \"allergens\" text[] NOT NULL,\n  \"carbs_g\" numeric(8,2) NOT NULL,\n  \"category\" text,\n  \"created_at\" timestamptz DEFAULT (now()) NOT NULL,\n  \"energy_kcal\" numeric(8,2) NOT NULL,\n  \"external_code\" text,\n  \"fat_g\" numeric(8,2) NOT NULL,\n  \"fiber_g\" numeric(8,2),\n  \"glycemic_index\" int4,\n  \"grams_per_ml\" numeric(6,3),\n  \"grams_per_unit\" numeric(8,2),\n  \"id\" text NOT NULL,\n  \"name\" text NOT NULL,\n  \"protein_g\" numeric(8,2) NOT NULL,\n  \"saturated_fat_g\" numeric(8,2),\n  \"slug\" text NOT NULL,\n  \"sodium_mg\" numeric(8,2),\n  \"source\" text DEFAULT 'TACO' NOT NULL,\n  \"sugars_g\" numeric(8,2),\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"ingredients_aliases_elem_not_null_3676266c\" CHECK (array_position(\"aliases\", NULL) IS NULL),\n  CONSTRAINT \"ingredients_allergens_check_541456a1\" CHECK (array_remove(\"allergens\"::text[], NULL) <@ ARRAY['GLUTEN', 'LACTOSE', 'LEITE', 'OVO', 'AMENDOIM', 'CASTANHAS', 'SOJA', 'PEIXE', 'CRUSTACEOS', 'GERGELIM']::text[]),\n  CONSTRAINT \"ingredients_allergens_elem_not_null_a997b371\" CHECK (array_position(\"allergens\", NULL) IS NULL),\n  CONSTRAINT \"ingredients_source_check_66b87911\" CHECK (\"source\" IN ('TACO', 'USDA', 'CUSTOM'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"ingredients\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ingredients\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.recipe_ingredients",
+    "label": "Create table \"recipe_ingredients\"",
+    "summary": "Creates table \"recipe_ingredients\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "recipe_ingredients"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"recipe_ingredients\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"recipe_ingredients\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"recipe_ingredients\"",
+        "sql": "CREATE TABLE \"public\".\"recipe_ingredients\" (\n  \"from_pantry\" bool DEFAULT true NOT NULL,\n  \"grams\" numeric(10,2),\n  \"id\" text NOT NULL,\n  \"ingredient_id\" text,\n  \"name\" text NOT NULL,\n  \"position\" int4 NOT NULL,\n  \"quantity\" numeric(10,2) NOT NULL,\n  \"recipe_id\" text NOT NULL,\n  \"unit\" text NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"recipe_ingredients_unit_check_daaa4240\" CHECK (\"unit\" IN ('G', 'KG', 'ML', 'L', 'XICARA', 'COLHER_SOPA', 'COLHER_CHA', 'UNIDADE', 'FATIA', 'DENTE', 'PITADA', 'A_GOSTO'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"recipe_ingredients\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"recipe_ingredients\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.recipe_nutrition",
+    "label": "Create table \"recipe_nutrition\"",
+    "summary": "Creates table \"recipe_nutrition\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "recipe_nutrition"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"recipe_nutrition\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"recipe_nutrition\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"recipe_nutrition\"",
+        "sql": "CREATE TABLE \"public\".\"recipe_nutrition\" (\n  \"calculated_at\" timestamptz DEFAULT (now()) NOT NULL,\n  \"carbs_g\" numeric(8,2) NOT NULL,\n  \"coverage_percent\" int4 NOT NULL,\n  \"energy_kcal\" numeric(8,2) NOT NULL,\n  \"fat_g\" numeric(8,2) NOT NULL,\n  \"fiber_g\" numeric(8,2),\n  \"id\" text NOT NULL,\n  \"protein_g\" numeric(8,2) NOT NULL,\n  \"recipe_id\" text NOT NULL,\n  \"saturated_fat_g\" numeric(8,2),\n  \"sodium_mg\" numeric(8,2),\n  \"sugars_g\" numeric(8,2),\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"recipe_nutrition\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"recipe_nutrition\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.recipe_steps",
+    "label": "Create table \"recipe_steps\"",
+    "summary": "Creates table \"recipe_steps\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "recipe_steps"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"recipe_steps\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"recipe_steps\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"recipe_steps\"",
+        "sql": "CREATE TABLE \"public\".\"recipe_steps\" (\n  \"duration_minutes\" int4,\n  \"id\" text NOT NULL,\n  \"instruction\" text NOT NULL,\n  \"position\" int4 NOT NULL,\n  \"recipe_id\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"recipe_steps\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"recipe_steps\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.recipes",
+    "label": "Create table \"recipes\"",
+    "summary": "Creates table \"recipes\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "recipes"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"recipes\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"recipes\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"recipes\"",
+        "sql": "CREATE TABLE \"public\".\"recipes\" (\n  \"cook_time_minutes\" int4,\n  \"created_at\" timestamptz DEFAULT (now()) NOT NULL,\n  \"description\" text,\n  \"difficulty\" text DEFAULT 'FACIL' NOT NULL,\n  \"generation_request_id\" text,\n  \"id\" text NOT NULL,\n  \"prep_time_minutes\" int4 NOT NULL,\n  \"servings\" int4 NOT NULL,\n  \"tips\" text,\n  \"title\" text NOT NULL,\n  \"updated_at\" timestamptz NOT NULL,\n  \"user_id\" text NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"recipes_difficulty_check_735302a2\" CHECK (\"difficulty\" IN ('FACIL', 'MEDIO', 'DIFICIL'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"recipes\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"recipes\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.refresh_tokens",
+    "label": "Create table \"refresh_tokens\"",
+    "summary": "Creates table \"refresh_tokens\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "refresh_tokens"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"refresh_tokens\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"refresh_tokens\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"refresh_tokens\"",
+        "sql": "CREATE TABLE \"public\".\"refresh_tokens\" (\n  \"created_at\" timestamptz DEFAULT (now()) NOT NULL,\n  \"expires_at\" timestamptz NOT NULL,\n  \"id\" text NOT NULL,\n  \"revoked_at\" timestamptz,\n  \"token_hash\" text NOT NULL,\n  \"user_agent\" text,\n  \"user_id\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"refresh_tokens\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"refresh_tokens\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.users",
+    "label": "Create table \"users\"",
+    "summary": "Creates table \"users\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "users"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"users\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"users\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"users\"",
+        "sql": "CREATE TABLE \"public\".\"users\" (\n  \"created_at\" timestamptz DEFAULT (now()) NOT NULL,\n  \"email\" text NOT NULL,\n  \"id\" text NOT NULL,\n  \"name\" text NOT NULL,\n  \"password_hash\" text NOT NULL,\n  \"updated_at\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"users\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"users\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.health_profiles.health_profiles_user_id_key",
+    "label": "Add unique constraint on \"health_profiles\" (user_id)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "health_profiles_user_id_key",
+        "table": "health_profiles"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"health_profiles_user_id_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "health_profiles_user_id_key",
+          "public",
+          "\"public\".\"health_profiles\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"health_profiles_user_id_key\"",
+        "sql": "ALTER TABLE \"public\".\"health_profiles\" ADD CONSTRAINT \"health_profiles_user_id_key\" UNIQUE (\"user_id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"health_profiles_user_id_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "health_profiles_user_id_key",
+          "public",
+          "\"public\".\"health_profiles\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.ingredients.ingredients_slug_key",
+    "label": "Add unique constraint on \"ingredients\" (slug)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "ingredients_slug_key",
+        "table": "ingredients"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"ingredients_slug_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ingredients_slug_key",
+          "public",
+          "\"public\".\"ingredients\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"ingredients_slug_key\"",
+        "sql": "ALTER TABLE \"public\".\"ingredients\" ADD CONSTRAINT \"ingredients_slug_key\" UNIQUE (\"slug\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"ingredients_slug_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ingredients_slug_key",
+          "public",
+          "\"public\".\"ingredients\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.recipe_nutrition.recipe_nutrition_recipe_id_key",
+    "label": "Add unique constraint on \"recipe_nutrition\" (recipe_id)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "recipe_nutrition_recipe_id_key",
+        "table": "recipe_nutrition"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"recipe_nutrition_recipe_id_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "recipe_nutrition_recipe_id_key",
+          "public",
+          "\"public\".\"recipe_nutrition\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"recipe_nutrition_recipe_id_key\"",
+        "sql": "ALTER TABLE \"public\".\"recipe_nutrition\" ADD CONSTRAINT \"recipe_nutrition_recipe_id_key\" UNIQUE (\"recipe_id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"recipe_nutrition_recipe_id_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "recipe_nutrition_recipe_id_key",
+          "public",
+          "\"public\".\"recipe_nutrition\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.recipe_steps.recipe_steps_recipe_id_position_key",
+    "label": "Add unique constraint on \"recipe_steps\" (recipe_id, position)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "recipe_steps_recipe_id_position_key",
+        "table": "recipe_steps"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"recipe_steps_recipe_id_position_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "recipe_steps_recipe_id_position_key",
+          "public",
+          "\"public\".\"recipe_steps\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"recipe_steps_recipe_id_position_key\"",
+        "sql": "ALTER TABLE \"public\".\"recipe_steps\" ADD CONSTRAINT \"recipe_steps_recipe_id_position_key\" UNIQUE (\"recipe_id\", \"position\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"recipe_steps_recipe_id_position_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "recipe_steps_recipe_id_position_key",
+          "public",
+          "\"public\".\"recipe_steps\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.recipes.recipes_generation_request_id_key",
+    "label": "Add unique constraint on \"recipes\" (generation_request_id)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "recipes_generation_request_id_key",
+        "table": "recipes"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"recipes_generation_request_id_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "recipes_generation_request_id_key",
+          "public",
+          "\"public\".\"recipes\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"recipes_generation_request_id_key\"",
+        "sql": "ALTER TABLE \"public\".\"recipes\" ADD CONSTRAINT \"recipes_generation_request_id_key\" UNIQUE (\"generation_request_id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"recipes_generation_request_id_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "recipes_generation_request_id_key",
+          "public",
+          "\"public\".\"recipes\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.refresh_tokens.refresh_tokens_token_hash_key",
+    "label": "Add unique constraint on \"refresh_tokens\" (token_hash)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "refresh_tokens_token_hash_key",
+        "table": "refresh_tokens"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"refresh_tokens_token_hash_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "refresh_tokens_token_hash_key",
+          "public",
+          "\"public\".\"refresh_tokens\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"refresh_tokens_token_hash_key\"",
+        "sql": "ALTER TABLE \"public\".\"refresh_tokens\" ADD CONSTRAINT \"refresh_tokens_token_hash_key\" UNIQUE (\"token_hash\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"refresh_tokens_token_hash_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "refresh_tokens_token_hash_key",
+          "public",
+          "\"public\".\"refresh_tokens\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.users.users_email_key",
+    "label": "Add unique constraint on \"users\" (email)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "users_email_key",
+        "table": "users"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"users_email_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "users_email_key",
+          "public",
+          "\"public\".\"users\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"users_email_key\"",
+        "sql": "ALTER TABLE \"public\".\"users\" ADD CONSTRAINT \"users_email_key\" UNIQUE (\"email\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"users_email_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "users_email_key",
+          "public",
+          "\"public\".\"users\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.favorites.favorites_recipe_id_idx_bc78e692",
+    "label": "Create index \"favorites_recipe_id_idx_bc78e692\" on \"favorites\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "favorites_recipe_id_idx_bc78e692",
+        "table": "favorites"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"favorites_recipe_id_idx_bc78e692\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"favorites_recipe_id_idx_bc78e692\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"favorites_recipe_id_idx_bc78e692\"",
+        "sql": "CREATE INDEX \"favorites_recipe_id_idx_bc78e692\" ON \"public\".\"favorites\" (\"recipe_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"favorites_recipe_id_idx_bc78e692\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"favorites_recipe_id_idx_bc78e692\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.favorites.favorites_user_id_idx_6c952402",
+    "label": "Create index \"favorites_user_id_idx_6c952402\" on \"favorites\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "favorites_user_id_idx_6c952402",
+        "table": "favorites"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"favorites_user_id_idx_6c952402\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"favorites_user_id_idx_6c952402\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"favorites_user_id_idx_6c952402\"",
+        "sql": "CREATE INDEX \"favorites_user_id_idx_6c952402\" ON \"public\".\"favorites\" (\"user_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"favorites_user_id_idx_6c952402\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"favorites_user_id_idx_6c952402\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.generation_requests.generation_requests_user_id_created_at_idx_b562028f",
+    "label": "Create index \"generation_requests_user_id_created_at_idx_b562028f\" on \"generation_requests\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "generation_requests_user_id_created_at_idx_b562028f",
+        "table": "generation_requests"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"generation_requests_user_id_created_at_idx_b562028f\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"generation_requests_user_id_created_at_idx_b562028f\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"generation_requests_user_id_created_at_idx_b562028f\"",
+        "sql": "CREATE INDEX \"generation_requests_user_id_created_at_idx_b562028f\" ON \"public\".\"generation_requests\" (\"user_id\", \"created_at\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"generation_requests_user_id_created_at_idx_b562028f\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"generation_requests_user_id_created_at_idx_b562028f\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.generation_requests.generation_requests_user_id_idx_6c952402",
+    "label": "Create index \"generation_requests_user_id_idx_6c952402\" on \"generation_requests\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "generation_requests_user_id_idx_6c952402",
+        "table": "generation_requests"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"generation_requests_user_id_idx_6c952402\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"generation_requests_user_id_idx_6c952402\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"generation_requests_user_id_idx_6c952402\"",
+        "sql": "CREATE INDEX \"generation_requests_user_id_idx_6c952402\" ON \"public\".\"generation_requests\" (\"user_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"generation_requests_user_id_idx_6c952402\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"generation_requests_user_id_idx_6c952402\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.ingredients.ingredient_name_search_f619d6de",
+    "label": "Create index \"ingredient_name_search_f619d6de\" on \"ingredients\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "ingredient_name_search_f619d6de",
+        "table": "ingredients"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"ingredient_name_search_f619d6de\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ingredient_name_search_f619d6de\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"ingredient_name_search_f619d6de\"",
+        "sql": "CREATE INDEX \"ingredient_name_search_f619d6de\" ON \"public\".\"ingredients\" USING \"gin\" (to_tsvector('portuguese', \"name\"))",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"ingredient_name_search_f619d6de\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ingredient_name_search_f619d6de\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.ingredients.ingredients_name_idx_ce87e6ba",
+    "label": "Create index \"ingredients_name_idx_ce87e6ba\" on \"ingredients\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "ingredients_name_idx_ce87e6ba",
+        "table": "ingredients"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"ingredients_name_idx_ce87e6ba\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ingredients_name_idx_ce87e6ba\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"ingredients_name_idx_ce87e6ba\"",
+        "sql": "CREATE INDEX \"ingredients_name_idx_ce87e6ba\" ON \"public\".\"ingredients\" (\"name\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"ingredients_name_idx_ce87e6ba\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ingredients_name_idx_ce87e6ba\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.recipe_ingredients.recipe_ingredients_ingredient_id_idx_30032a11",
+    "label": "Create index \"recipe_ingredients_ingredient_id_idx_30032a11\" on \"recipe_ingredients\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "recipe_ingredients_ingredient_id_idx_30032a11",
+        "table": "recipe_ingredients"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"recipe_ingredients_ingredient_id_idx_30032a11\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"recipe_ingredients_ingredient_id_idx_30032a11\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"recipe_ingredients_ingredient_id_idx_30032a11\"",
+        "sql": "CREATE INDEX \"recipe_ingredients_ingredient_id_idx_30032a11\" ON \"public\".\"recipe_ingredients\" (\"ingredient_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"recipe_ingredients_ingredient_id_idx_30032a11\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"recipe_ingredients_ingredient_id_idx_30032a11\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.recipe_ingredients.recipe_ingredients_recipe_id_idx_bc78e692",
+    "label": "Create index \"recipe_ingredients_recipe_id_idx_bc78e692\" on \"recipe_ingredients\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "recipe_ingredients_recipe_id_idx_bc78e692",
+        "table": "recipe_ingredients"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"recipe_ingredients_recipe_id_idx_bc78e692\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"recipe_ingredients_recipe_id_idx_bc78e692\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"recipe_ingredients_recipe_id_idx_bc78e692\"",
+        "sql": "CREATE INDEX \"recipe_ingredients_recipe_id_idx_bc78e692\" ON \"public\".\"recipe_ingredients\" (\"recipe_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"recipe_ingredients_recipe_id_idx_bc78e692\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"recipe_ingredients_recipe_id_idx_bc78e692\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.recipe_steps.recipe_steps_recipe_id_idx_bc78e692",
+    "label": "Create index \"recipe_steps_recipe_id_idx_bc78e692\" on \"recipe_steps\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "recipe_steps_recipe_id_idx_bc78e692",
+        "table": "recipe_steps"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"recipe_steps_recipe_id_idx_bc78e692\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"recipe_steps_recipe_id_idx_bc78e692\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"recipe_steps_recipe_id_idx_bc78e692\"",
+        "sql": "CREATE INDEX \"recipe_steps_recipe_id_idx_bc78e692\" ON \"public\".\"recipe_steps\" (\"recipe_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"recipe_steps_recipe_id_idx_bc78e692\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"recipe_steps_recipe_id_idx_bc78e692\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.recipes.recipes_user_id_created_at_idx_b562028f",
+    "label": "Create index \"recipes_user_id_created_at_idx_b562028f\" on \"recipes\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "recipes_user_id_created_at_idx_b562028f",
+        "table": "recipes"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"recipes_user_id_created_at_idx_b562028f\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"recipes_user_id_created_at_idx_b562028f\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"recipes_user_id_created_at_idx_b562028f\"",
+        "sql": "CREATE INDEX \"recipes_user_id_created_at_idx_b562028f\" ON \"public\".\"recipes\" (\"user_id\", \"created_at\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"recipes_user_id_created_at_idx_b562028f\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"recipes_user_id_created_at_idx_b562028f\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.recipes.recipes_user_id_idx_6c952402",
+    "label": "Create index \"recipes_user_id_idx_6c952402\" on \"recipes\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "recipes_user_id_idx_6c952402",
+        "table": "recipes"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"recipes_user_id_idx_6c952402\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"recipes_user_id_idx_6c952402\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"recipes_user_id_idx_6c952402\"",
+        "sql": "CREATE INDEX \"recipes_user_id_idx_6c952402\" ON \"public\".\"recipes\" (\"user_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"recipes_user_id_idx_6c952402\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"recipes_user_id_idx_6c952402\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.refresh_tokens.refresh_tokens_user_id_idx_6c952402",
+    "label": "Create index \"refresh_tokens_user_id_idx_6c952402\" on \"refresh_tokens\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "refresh_tokens_user_id_idx_6c952402",
+        "table": "refresh_tokens"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"refresh_tokens_user_id_idx_6c952402\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"refresh_tokens_user_id_idx_6c952402\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"refresh_tokens_user_id_idx_6c952402\"",
+        "sql": "CREATE INDEX \"refresh_tokens_user_id_idx_6c952402\" ON \"public\".\"refresh_tokens\" (\"user_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"refresh_tokens_user_id_idx_6c952402\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"refresh_tokens_user_id_idx_6c952402\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.favorites.favorites_user_id_fkey",
+    "label": "Add foreign key \"favorites_user_id_fkey\" on \"favorites\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "favorites_user_id_fkey",
+        "table": "favorites"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"favorites_user_id_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "favorites_user_id_fkey",
+          "public",
+          "\"public\".\"favorites\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"favorites_user_id_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"favorites\"\nADD CONSTRAINT \"favorites_user_id_fkey\"\nFOREIGN KEY (\"user_id\")\nREFERENCES \"public\".\"users\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"favorites_user_id_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "favorites_user_id_fkey",
+          "public",
+          "\"public\".\"favorites\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.favorites.favorites_recipe_id_fkey",
+    "label": "Add foreign key \"favorites_recipe_id_fkey\" on \"favorites\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "favorites_recipe_id_fkey",
+        "table": "favorites"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"favorites_recipe_id_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "favorites_recipe_id_fkey",
+          "public",
+          "\"public\".\"favorites\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"favorites_recipe_id_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"favorites\"\nADD CONSTRAINT \"favorites_recipe_id_fkey\"\nFOREIGN KEY (\"recipe_id\")\nREFERENCES \"public\".\"recipes\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"favorites_recipe_id_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "favorites_recipe_id_fkey",
+          "public",
+          "\"public\".\"favorites\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.generation_requests.generation_requests_user_id_fkey",
+    "label": "Add foreign key \"generation_requests_user_id_fkey\" on \"generation_requests\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "generation_requests_user_id_fkey",
+        "table": "generation_requests"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"generation_requests_user_id_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "generation_requests_user_id_fkey",
+          "public",
+          "\"public\".\"generation_requests\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"generation_requests_user_id_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"generation_requests\"\nADD CONSTRAINT \"generation_requests_user_id_fkey\"\nFOREIGN KEY (\"user_id\")\nREFERENCES \"public\".\"users\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"generation_requests_user_id_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "generation_requests_user_id_fkey",
+          "public",
+          "\"public\".\"generation_requests\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.health_profiles.health_profiles_user_id_fkey",
+    "label": "Add foreign key \"health_profiles_user_id_fkey\" on \"health_profiles\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "health_profiles_user_id_fkey",
+        "table": "health_profiles"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"health_profiles_user_id_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "health_profiles_user_id_fkey",
+          "public",
+          "\"public\".\"health_profiles\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"health_profiles_user_id_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"health_profiles\"\nADD CONSTRAINT \"health_profiles_user_id_fkey\"\nFOREIGN KEY (\"user_id\")\nREFERENCES \"public\".\"users\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"health_profiles_user_id_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "health_profiles_user_id_fkey",
+          "public",
+          "\"public\".\"health_profiles\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.recipe_ingredients.recipe_ingredients_recipe_id_fkey",
+    "label": "Add foreign key \"recipe_ingredients_recipe_id_fkey\" on \"recipe_ingredients\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "recipe_ingredients_recipe_id_fkey",
+        "table": "recipe_ingredients"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"recipe_ingredients_recipe_id_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "recipe_ingredients_recipe_id_fkey",
+          "public",
+          "\"public\".\"recipe_ingredients\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"recipe_ingredients_recipe_id_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"recipe_ingredients\"\nADD CONSTRAINT \"recipe_ingredients_recipe_id_fkey\"\nFOREIGN KEY (\"recipe_id\")\nREFERENCES \"public\".\"recipes\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"recipe_ingredients_recipe_id_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "recipe_ingredients_recipe_id_fkey",
+          "public",
+          "\"public\".\"recipe_ingredients\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.recipe_ingredients.recipe_ingredients_ingredient_id_fkey",
+    "label": "Add foreign key \"recipe_ingredients_ingredient_id_fkey\" on \"recipe_ingredients\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "recipe_ingredients_ingredient_id_fkey",
+        "table": "recipe_ingredients"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"recipe_ingredients_ingredient_id_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "recipe_ingredients_ingredient_id_fkey",
+          "public",
+          "\"public\".\"recipe_ingredients\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"recipe_ingredients_ingredient_id_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"recipe_ingredients\"\nADD CONSTRAINT \"recipe_ingredients_ingredient_id_fkey\"\nFOREIGN KEY (\"ingredient_id\")\nREFERENCES \"public\".\"ingredients\" (\"id\")\nON DELETE SET NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"recipe_ingredients_ingredient_id_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "recipe_ingredients_ingredient_id_fkey",
+          "public",
+          "\"public\".\"recipe_ingredients\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.recipe_nutrition.recipe_nutrition_recipe_id_fkey",
+    "label": "Add foreign key \"recipe_nutrition_recipe_id_fkey\" on \"recipe_nutrition\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "recipe_nutrition_recipe_id_fkey",
+        "table": "recipe_nutrition"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"recipe_nutrition_recipe_id_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "recipe_nutrition_recipe_id_fkey",
+          "public",
+          "\"public\".\"recipe_nutrition\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"recipe_nutrition_recipe_id_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"recipe_nutrition\"\nADD CONSTRAINT \"recipe_nutrition_recipe_id_fkey\"\nFOREIGN KEY (\"recipe_id\")\nREFERENCES \"public\".\"recipes\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"recipe_nutrition_recipe_id_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "recipe_nutrition_recipe_id_fkey",
+          "public",
+          "\"public\".\"recipe_nutrition\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.recipe_steps.recipe_steps_recipe_id_fkey",
+    "label": "Add foreign key \"recipe_steps_recipe_id_fkey\" on \"recipe_steps\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "recipe_steps_recipe_id_fkey",
+        "table": "recipe_steps"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"recipe_steps_recipe_id_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "recipe_steps_recipe_id_fkey",
+          "public",
+          "\"public\".\"recipe_steps\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"recipe_steps_recipe_id_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"recipe_steps\"\nADD CONSTRAINT \"recipe_steps_recipe_id_fkey\"\nFOREIGN KEY (\"recipe_id\")\nREFERENCES \"public\".\"recipes\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"recipe_steps_recipe_id_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "recipe_steps_recipe_id_fkey",
+          "public",
+          "\"public\".\"recipe_steps\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.recipes.recipes_user_id_fkey",
+    "label": "Add foreign key \"recipes_user_id_fkey\" on \"recipes\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "recipes_user_id_fkey",
+        "table": "recipes"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"recipes_user_id_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "recipes_user_id_fkey",
+          "public",
+          "\"public\".\"recipes\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"recipes_user_id_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"recipes\"\nADD CONSTRAINT \"recipes_user_id_fkey\"\nFOREIGN KEY (\"user_id\")\nREFERENCES \"public\".\"users\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"recipes_user_id_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "recipes_user_id_fkey",
+          "public",
+          "\"public\".\"recipes\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.recipes.recipes_generation_request_id_fkey",
+    "label": "Add foreign key \"recipes_generation_request_id_fkey\" on \"recipes\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "recipes_generation_request_id_fkey",
+        "table": "recipes"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"recipes_generation_request_id_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "recipes_generation_request_id_fkey",
+          "public",
+          "\"public\".\"recipes\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"recipes_generation_request_id_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"recipes\"\nADD CONSTRAINT \"recipes_generation_request_id_fkey\"\nFOREIGN KEY (\"generation_request_id\")\nREFERENCES \"public\".\"generation_requests\" (\"id\")\nON DELETE SET NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"recipes_generation_request_id_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "recipes_generation_request_id_fkey",
+          "public",
+          "\"public\".\"recipes\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.refresh_tokens.refresh_tokens_user_id_fkey",
+    "label": "Add foreign key \"refresh_tokens_user_id_fkey\" on \"refresh_tokens\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "refresh_tokens_user_id_fkey",
+        "table": "refresh_tokens"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"refresh_tokens_user_id_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "refresh_tokens_user_id_fkey",
+          "public",
+          "\"public\".\"refresh_tokens\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"refresh_tokens_user_id_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"refresh_tokens\"\nADD CONSTRAINT \"refresh_tokens_user_id_fkey\"\nFOREIGN KEY (\"user_id\")\nREFERENCES \"public\".\"users\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"refresh_tokens_user_id_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "refresh_tokens_user_id_fkey",
+          "public",
+          "\"public\".\"refresh_tokens\""
+        ]
+      }
+    ]
+  }
+]

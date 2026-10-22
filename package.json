@@ -1,0 +1,62 @@
+{
+  "name": "o-que-sobrou-backend",
+  "private": true,
+  "packageManager": "pnpm@11.28.5",
+  "type": "module",
+  "engines": {
+    "node": "^22.18.0 || ^24.11.0 || >=26.0.0"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "composer:deploy": "prisma deploy module.ts",
+    "composer:dev": "prisma dev module.ts",
+    "contract:emit": "prisma contract emit",
+    "db:init": "prisma db init",
+    "db:update": "prisma db update",
+    "db:verify": "prisma db verify",
+    "deploy": "pnpm run build && pnpm run composer:deploy",
+    "dev": "tsx watch --env-file=.env src/main.ts",
+    "dev:composer": "pnpm run build && pnpm run composer:dev",
+    "migrate": "prisma db migrate",
+    "migration:plan": "prisma migration plan",
+    "migration:show": "prisma migration show",
+    "migration:status": "prisma migration status",
+    "start": "node dist/server.mjs",
+    "test": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js"
+  },
+  "dependencies": {
+    "@nestjs/common": "^12.1.2",
+    "@nestjs/config": "^12.0.1",
+    "@nestjs/core": "^12.1.2",
+    "@nestjs/jwt": "^12.0.3",
+    "@nestjs/platform-express": "^12.1.2",
+    "@prisma/composer": "0.28.0",
+    "@prisma/composer-prisma-cloud": "0.28.0",
+    "@prisma/orm-postgres": "8.0.0-rc.16",
+    "alchemy": "2.0.0-beta.78",
+    "argon2": "^0.45.1",
+    "bcrypt": "^6.0.0",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.15.1",
+    "express": "^5.3.0",
+    "hash": "^0.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.2",
+    "temporal-polyfill": "^1.0.5"
+  },
+  "devDependencies": {
+    "@jest/globals": "^30.5.2",
+    "@nestjs/testing": "^12.2.0",
+    "@prisma/dev": "0.25.2",
+    "@types/express": "^5.0.6",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^26.6.4",
+    "jest": "^30.5.2",
+    "prisma": "8.0.0-rc.21",
+    "ts-jest": "^29.4.15",
+    "tsdown": "^0.23.0",
+    "tsx": "^4.23.15",
+    "typescript": "^6.0.3"
+  }
+}

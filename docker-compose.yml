@@ -1,0 +1,19 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    container_name: o-que-sobrou-api
+    restart: unless-stopped
+
+    ports:
+      - "3000:3000"
+
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DATABASE_URL: "postgresql://oqs_user:${POSTGRES_PASSWORD}@host.docker.internal:5433/o_que_sobrou?schema=public"
+
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

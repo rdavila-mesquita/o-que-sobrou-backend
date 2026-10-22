@@ -1,0 +1,303 @@
+// use prisma-8
+
+/// Condições de saúde que alimentam as regras do validador (módulo safety).
+enum HealthCondition {
+  DIABETES_TIPO_1
+  DIABETES_TIPO_2
+  PRE_DIABETES
+  HIPERTENSAO
+  COLESTEROL_ALTO
+  DOENCA_RENAL
+  DOENCA_CELIACA
+  INTOLERANCIA_LACTOSE
+  GOTA
+  GASTRITE_REFLUXO
+}
+
+/// Alérgenos: exclusão rígida (nunca podem aparecer na receita).
+enum Allergen {
+  GLUTEN
+  LACTOSE
+  LEITE
+  OVO
+  AMENDOIM
+  CASTANHAS
+  SOJA
+  PEIXE
+  CRUSTACEOS
+  GERGELIM
+}
+
+enum DietaryPreference {
+  VEGETARIANO
+  VEGANO
+  SEM_CARNE_VERMELHA
+  SEM_PORCO
+  LOW_CARB
+  ALTA_PROTEINA
+}
+
+enum Difficulty {
+  FACIL
+  MEDIO
+  DIFICIL
+}
+
+enum MeasureUnit {
+  G
+  KG
+  ML
+  L
+  XICARA
+  COLHER_SOPA
+  COLHER_CHA
+  UNIDADE
+  FATIA
+  DENTE
+  PITADA
+  A_GOSTO
+}
+
+enum IngredientSource {
+  TACO
+  USDA
+  CUSTOM
+}
+
+enum GenerationStatus {
+  PENDING
+  SUCCEEDED
+  REJECTED_BY_SAFETY
+  FAILED
+}
+
+// -----------------------------------------------------------------------------
+// USUÁRIO E PERFIL DE SAÚDE
+// -----------------------------------------------------------------------------
+
+model User {
+  id           String            @id @default(cuid(2))
+  name         String
+  email        String            @unique
+  passwordHash String            @map("password_hash")
+  createdAt    TimestamptzJsDate @default(now()) @map("created_at")
+  updatedAt    temporal.updatedAtJsDate() @map("updated_at")
+
+  healthProfile      HealthProfile?
+  recipes            Recipe[]
+  favorites          Favorite[]
+  generationRequests GenerationRequest[]
+  refreshTokens      RefreshToken[]
+
+  @@map("users")
+}
+
+model HealthProfile {
+  id     String @id @default(cuid(2))
+  userId String @unique @map("user_id")
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  conditions          HealthCondition[]
+  allergens           Allergen[]
+  dietaryPreferences  DietaryPreference[] @map("dietary_preferences")
+  dislikedIngredients String[]            @map("disliked_ingredients")
+  dailyCalorieTarget  Int?                @map("daily_calorie_target")
+  notes               String?
+
+  /// Data em que o usuário aceitou o aviso de que o app não substitui
+  /// acompanhamento médico/nutricional.
+  disclaimerAcceptedAt TimestamptzJsDate? @map("disclaimer_accepted_at")
+
+  createdAt TimestamptzJsDate @default(now()) @map("created_at")
+  updatedAt temporal.updatedAtJsDate() @map("updated_at")
+
+  @@map("health_profiles")
+}
+
+model RefreshToken {
+  id        String             @id @default(cuid(2))
+  userId    String             @map("user_id")
+  user      User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String             @unique @map("token_hash")
+  userAgent String?            @map("user_agent")
+  expiresAt TimestamptzJsDate  @map("expires_at")
+  revokedAt TimestamptzJsDate? @map("revoked_at")
+  createdAt TimestamptzJsDate  @default(now()) @map("created_at")
+
+  @@index([userId])
+  @@map("refresh_tokens")
+}
+
+// -----------------------------------------------------------------------------
+// CATÁLOGO DE INGREDIENTES (base nutricional — TACO/USDA)
+// Valores nutricionais são por 100 g do alimento.
+// -----------------------------------------------------------------------------
+
+model Ingredient {
+  id           String           @id @default(cuid(2))
+  name         String
+  slug         String           @unique
+  aliases      String[]
+  category     String?
+  source       IngredientSource @default(TACO)
+  externalCode String?          @map("external_code")
+
+  energyKcal    Numeric(8, 2)  @map("energy_kcal")
+  proteinG      Numeric(8, 2)  @map("protein_g")
+  carbsG        Numeric(8, 2)  @map("carbs_g")
+  fatG          Numeric(8, 2)  @map("fat_g")
+  saturatedFatG Numeric(8, 2)? @map("saturated_fat_g")
+  fiberG        Numeric(8, 2)? @map("fiber_g")
+  sugarsG       Numeric(8, 2)? @map("sugars_g")
+  sodiumMg      Numeric(8, 2)? @map("sodium_mg")
+  glycemicIndex Int?           @map("glycemic_index")
+
+  /// Peso médio de 1 unidade (ex.: 1 ovo ≈ 50 g) para converter UNIDADE → gramas.
+  gramsPerUnit Numeric(8, 2)? @map("grams_per_unit")
+  /// Densidade aproximada para converter ML/XICARA/COLHER → gramas.
+  gramsPerMl   Numeric(6, 3)? @map("grams_per_ml")
+
+  allergens Allergen[]
+
+  recipeIngredients RecipeIngredient[]
+
+  createdAt TimestamptzJsDate @default(now()) @map("created_at")
+
+  @@index([name])
+  // Busca de ingredientes no autocomplete (full-text em português).
+  @@fullTextIndex([name], name: "ingredient_name_search", language: "portuguese")
+  @@map("ingredients")
+}
+
+// -----------------------------------------------------------------------------
+// RECEITAS
+// -----------------------------------------------------------------------------
+
+model Recipe {
+  id     String @id @default(cuid(2))
+  userId String @map("user_id")
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  generationRequestId String?            @unique @map("generation_request_id")
+  generationRequest   GenerationRequest? @relation(fields: [generationRequestId], references: [id], onDelete: SetNull)
+
+  title           String
+  description     String?
+  servings        Int
+  prepTimeMinutes Int        @map("prep_time_minutes")
+  cookTimeMinutes Int?       @map("cook_time_minutes")
+  difficulty      Difficulty @default(FACIL)
+  tips            String?
+
+  ingredients RecipeIngredient[]
+  steps       RecipeStep[]
+  nutrition   RecipeNutrition?
+  favorites   Favorite[]
+
+  createdAt TimestamptzJsDate @default(now()) @map("created_at")
+  updatedAt temporal.updatedAtJsDate() @map("updated_at")
+
+  @@index([userId, createdAt])
+  @@map("recipes")
+}
+
+model RecipeIngredient {
+  id       String @id @default(cuid(2))
+  recipeId String @map("recipe_id")
+  recipe   Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  /// Pode ficar nulo se a IA citar um item que não existe no catálogo.
+  ingredientId String?     @map("ingredient_id")
+  ingredient   Ingredient? @relation(fields: [ingredientId], references: [id], onDelete: SetNull)
+
+  /// Nome como aparece na receita (ex.: "cebola picada").
+  name     String
+  quantity Numeric(10, 2)
+  unit     MeasureUnit
+  /// Quantidade convertida para gramas (usada no cálculo nutricional).
+  grams    Numeric(10, 2)?
+  /// true = item que o usuário informou ter; false = item extra sugerido.
+  fromPantry Boolean @default(true) @map("from_pantry")
+  position   Int
+
+  @@index([recipeId])
+  @@map("recipe_ingredients")
+}
+
+model RecipeStep {
+  id              String @id @default(cuid(2))
+  recipeId        String @map("recipe_id")
+  recipe          Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  position        Int
+  instruction     String
+  durationMinutes Int?   @map("duration_minutes")
+
+  @@unique([recipeId, position])
+  @@map("recipe_steps")
+}
+
+/// Nutrição POR PORÇÃO, calculada pelo backend (não pela IA).
+model RecipeNutrition {
+  id       String @id @default(cuid(2))
+  recipeId String @unique @map("recipe_id")
+  recipe   Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  energyKcal    Numeric(8, 2)  @map("energy_kcal")
+  proteinG      Numeric(8, 2)  @map("protein_g")
+  carbsG        Numeric(8, 2)  @map("carbs_g")
+  fatG          Numeric(8, 2)  @map("fat_g")
+  saturatedFatG Numeric(8, 2)? @map("saturated_fat_g")
+  fiberG        Numeric(8, 2)? @map("fiber_g")
+  sugarsG       Numeric(8, 2)? @map("sugars_g")
+  sodiumMg      Numeric(8, 2)? @map("sodium_mg")
+
+  /// % dos ingredientes (por peso) encontrados na base nutricional.
+  /// Permite mostrar "valores estimados" quando a cobertura for baixa.
+  coveragePercent Int               @map("coverage_percent")
+  calculatedAt    TimestamptzJsDate @default(now()) @map("calculated_at")
+
+  @@map("recipe_nutrition")
+}
+
+model Favorite {
+  userId    String            @map("user_id")
+  recipeId  String            @map("recipe_id")
+  createdAt TimestamptzJsDate @default(now()) @map("created_at")
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  recipe Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  @@id([userId, recipeId])
+  @@map("favorites")
+}
+
+// -----------------------------------------------------------------------------
+// AUDITORIA DAS GERAÇÕES (custo de IA, limite diário e rastreio de segurança)
+// -----------------------------------------------------------------------------
+
+model GenerationRequest {
+  id     String @id @default(cuid(2))
+  userId String @map("user_id")
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  inputIngredients String[] @map("input_ingredients")
+  /// Cópia do perfil de saúde no momento da geração (o perfil pode mudar depois).
+  healthSnapshot   Json?    @map("health_snapshot")
+
+  status           GenerationStatus @default(PENDING)
+  attempts         Int              @default(0)
+  model            String?
+  promptTokens     Int?             @map("prompt_tokens")
+  completionTokens Int?             @map("completion_tokens")
+  /// Resultado do validador de segurança (violações encontradas por tentativa).
+  validationReport Json?            @map("validation_report")
+  errorMessage     String?          @map("error_message")
+
+  createdAt  TimestamptzJsDate  @default(now()) @map("created_at")
+  finishedAt TimestamptzJsDate? @map("finished_at")
+
+  recipe Recipe?
+
+  @@index([userId, createdAt])
+  @@map("generation_requests")
+}
