@@ -1,36 +1,101 @@
-# o-que-sobrou-backend
+# 🍳 O que sobrou — Backend
 
-A minimal nest app with Prisma 8 and Prisma Composer.
+API do **O que sobrou**, um app que vai gerar receitas com inteligência artificial a partir dos ingredientes que o usuário já tem em casa, informando o valor nutricional e respeitando restrições de saúde.
 
-## Run locally
+> Ex.: ovos, cebola, presunto, coentro e tomate → uma omelete completa, com calorias e macronutrientes.
+
+## 📍 Status do projeto
+
+🚧 **Em desenvolvimento.** A base da API (autenticação e modelagem de dados) está pronta. A geração de receitas com IA é a próxima etapa.
+
+## ✅ O que já funciona
+
+- Cadastro de usuário (signup)
+- Login (signin) com JWT
+- Refresh token para renovar a sessão
+- Rotas protegidas por autenticação
+- Modelagem completa do banco de dados com Prisma
+- Ambiente de banco de dados containerizado com Docker
+
+## 🔜 Próximos passos
+
+- [ ] Integração com IA para gerar receitas a partir dos ingredientes
+- [ ] Cálculo e exibição do valor nutricional
+- [ ] Considerar condições de saúde do usuário (ex.: diabetes) na geração
+- [ ] Histórico e favoritos de receitas
+- [ ] Testes automatizados
+- [ ] Deploy
+
+## 🛠️ Stack
+
+- [NestJS](https://nestjs.com/) + TypeScript
+- [Prisma](https://www.prisma.io/) (ORM)
+- [PostgreSQL](https://www.postgresql.org/)
+- [Docker](https://www.docker.com/) + Docker Compose
+- JWT (access token + refresh token)
+
+## 📋 Pré-requisitos
+
+- Node.js 20+
+- npm
+- Docker e Docker Compose
+
+## 🚀 Como rodar
 
 ```bash
-pnpm run dev:composer
+# 1. Clone o repositório
+git clone https://github.com/SEU_USUARIO/o-que-sobrou-backend.git
+cd o-que-sobrou-backend
+
+# 2. Configure as variáveis de ambiente
+cp .env.example .env
+# edite o .env com suas credenciais
+
+# 3. Suba o banco de dados com Docker
+docker compose up -d
+
+# 4. Instale as dependências
+npm install
+
+# 5. Rode as migrations
+npx prisma migrate dev
+
+# 6. Inicie a API em modo desenvolvimento
+npm run start:dev
 ```
 
-This builds the app and starts it with Composer. PostgreSQL projects get a local Prisma Postgres database and apply the committed migrations automatically.
+A API sobe em `http://localhost:3000` e o PostgreSQL em `localhost:5433`.
 
-## Deploy
+### Comandos úteis do Docker
 
 ```bash
-pnpm run deploy
+docker compose up -d      # sobe os containers em segundo plano
+docker compose down       # para e remove os containers (mantém os dados)
+docker compose down -v    # para e apaga também o volume do banco
+docker compose logs -f    # acompanha os logs
 ```
 
-The deploy script builds the framework output, provisions Prisma Postgres when selected, applies migrations, and deploys the app to Prisma Compute.
+## 🔐 Variáveis de ambiente
 
-The starter users are inserted idempotently from `src/prisma/seed.ts` on the first database query through the Composer service binding.
+| Variável             | Descrição                                |
+| -------------------- | ---------------------------------------- |
+| `POSTGRES_USER`      | Usuário do PostgreSQL (container)        |
+| `POSTGRES_PASSWORD`  | Senha do PostgreSQL (container)          |
+| `POSTGRES_DB`        | Nome do banco                            |
+| `DATABASE_URL`       | String de conexão usada pela API         |
+| `PORT`               | Porta da API (padrão: 3000)              |
+| `JWT_SECRET`         | Segredo para assinar o access token      |
+| `JWT_REFRESH_SECRET` | Segredo para assinar o refresh token     |
 
+## 📡 Endpoints
 
-## Prisma
+| Método | Rota             | Descrição                    | Auth |
+| ------ | ---------------- | ---------------------------- | ---- |
+| POST   | `/auth/signup`   | Cadastra um novo usuário     | Não  |
+| POST   | `/auth/signin`   | Autentica e retorna tokens   | Não  |
+| POST   | `/auth/refresh`  | Renova o access token        | Não  |
+| GET    | `/me`            | Rota protegida de exemplo    | Sim  |
 
-- Contract: `src/prisma/contract.prisma`
-- Prisma and Composer config: `prisma.config.ts`
-- Composer app: `module.ts` and `service.ts`
+## 👩‍💻 Autora
 
-After changing the contract, run:
-
-```bash
-pnpm run contract:emit
-```
-
-To use the framework's development server directly, run `pnpm run dev`. This direct mode requires `DATABASE_URL`.
+**Dávila** · [LinkedIn](https://www.linkedin.com/in/davila-ramos-b47994324/) · [GitHub](https://github.com/rdavila-mesquita)
