@@ -6,33 +6,39 @@ API do **O que sobrou**, um app que vai gerar receitas com inteligência artific
 
 ## 📍 Status do projeto
 
-🚧 **Em desenvolvimento.** A base da API (autenticação e modelagem de dados) está pronta. A geração de receitas com IA é a próxima etapa.
+🚧 **Em desenvolvimento.** A autenticação completa (cadastro, login, refresh token, verificação de e-mail e recuperação de senha) e a modelagem de dados estão prontas. A geração de receitas com IA é a próxima etapa.
 
 ## ✅ O que já funciona
 
 - Cadastro de usuário (`signup`) com senha protegida por hash (argon2)
 - Login (`signin`) com JWT (access token de 15 minutos)
+- Refresh token com rotação e revogação (`/auth/refresh`)
 - Rotas protegidas por autenticação (guard com Bearer token)
+- Verificação de e-mail após o cadastro, com reenvio do link
+- Recuperação de senha por e-mail (`forgot-password` e `reset-password`)
+- Respostas que não revelam se um e-mail está cadastrado (proteção contra enumeração de contas)
+- Envio de e-mails transacionais com [Resend](https://resend.com/)
 - Validação dos dados de entrada (class-validator)
 - Modelagem completa do banco de dados com Prisma: usuários, perfil de saúde, catálogo de ingredientes com valores nutricionais, receitas, favoritos e auditoria das gerações
-- Serviço de refresh token implementado e com testes unitários (hash SHA-256, expiração, revogação e rotação)
+- Testes unitários do refresh token (hash SHA-256, expiração, revogação e rotação) e teste e2e de condição de corrida na renovação
+- API containerizada com Docker
 
 ## 🔜 Próximos passos
 
-- [ ] Gravar o refresh token no login e expor a rota `/auth/refresh`
-- [ ] Popular o catálogo de ingredientes (base TACO) com seed
-- [ ] Integração com IA para gerar receitas a partir dos ingredientes
-- [ ] Cálculo do valor nutricional pelo backend (e não pela IA)
-- [ ] Validador de segurança considerando condições de saúde e alérgenos (ex.: diabetes)
-- [ ] Histórico e favoritos de receitas
-- [ ] Ampliar os testes automatizados
-- [ ] Deploy
+- Popular o catálogo de ingredientes (base TACO) com seed
+- Integração com IA para gerar receitas a partir dos ingredientes
+- Cálculo do valor nutricional pelo backend (e não pela IA)
+- Validador de segurança considerando condições de saúde e alérgenos (ex.: diabetes)
+- Histórico e favoritos de receitas
+- Ampliar os testes automatizados
+- Deploy
 
 ## 🧠 Decisões de projeto
 
 - **A IA sugere a receita, o backend calcula a nutrição.** Cada ingrediente guarda seus valores por 100 g, as quantidades são convertidas para gramas e a nutrição por porção é calculada no servidor, com um campo de cobertura que indica quando o valor é apenas estimado.
 - **Perfil de saúde no cadastro.** Condições de saúde, alérgenos (exclusão rígida), preferências alimentares e aceite do aviso de que o app não substitui acompanhamento médico ou nutricional.
 - **Auditoria das gerações.** Cada geração registra os ingredientes enviados, uma cópia do perfil de saúde da época, as tentativas e o resultado da validação.
+- **Autenticação sem vazar informação.** Os endpoints de reenvio de verificação e de recuperação de senha respondem sempre com a mesma mensagem, exista a conta ou não.
 
 ## 🛠️ Stack
 
@@ -41,6 +47,7 @@ API do **O que sobrou**, um app que vai gerar receitas com inteligência artific
 - [PostgreSQL](https://www.postgresql.org/)
 - [Docker](https://www.docker.com/) + Docker Compose
 - JWT (access token) + refresh token com hash no banco
+- [Resend](https://resend.com/) (e-mails)
 - Jest (testes)
 - pnpm
 
@@ -77,6 +84,13 @@ pnpm run dev
 
 A API sobe em `http://localhost:3000`.
 
+### Build e execução em produção
+
+```bash
+pnpm run build   # gera o bundle em dist/
+pnpm start       # executa dist/server.mjs
+```
+
 ### Rodando os testes
 
 ```bash
@@ -93,29 +107,69 @@ docker compose logs -f         # acompanha os logs
 docker compose down            # para e remove o container
 ```
 
+## 📜 Scripts
+
+| Script                      | O que faz                                  |
+| --------------------------- | ------------------------------------------ |
+| `pnpm run dev`              | Inicia a API em modo watch, lendo o `.env` |
+| `pnpm run build`            | Gera o build de produção (tsdown)          |
+| `pnpm start`                | Executa o build gerado                     |
+| `pnpm test`                 | Roda os testes (Jest)                      |
+| `pnpm run contract:emit`    | Gera os artefatos do contrato do Prisma    |
+| `pnpm run migrate`          | Aplica as migrations no banco              |
+| `pnpm run migration:plan`   | Planeja uma nova migration                 |
+| `pnpm run migration:status` | Mostra o status das migrations             |
+
+## 📁 Estrutura
+
+```
+.
+├── migrations/               # migrations do banco e snapshots do contrato
+├── src/
+│   ├── auth/                 # signup, signin, refresh token
+│   ├── email/                # envio de e-mails (Resend)
+│   ├── email-verification/   # verificação de e-mail
+│   ├── password-recovery/    # recuperação de senha
+│   ├── common/               # guards e decorators
+│   ├── prisma/               # contrato, schema e seed
+│   ├── tests/                # testes e2e
+│   └── main.ts
+├── module.ts                 # módulo usado pelos scripts composer:dev e composer:deploy
+├── prisma.config.ts          # configuração do Prisma
+├── tsdown.config.ts          # configuração do build
+├── Dockerfile
+├── docker-compose.yml
+└── .env.example
+```
+
 ## 🔐 Variáveis de ambiente
 
-| Variável             | Descrição                                                |
-| -------------------- | -------------------------------------------------------- |
-| `POSTGRES_USER`      | Usuário do PostgreSQL                                    |
-| `POSTGRES_PASSWORD`  | Senha do PostgreSQL (também usada pelo Docker Compose)   |
-| `POSTGRES_DB`        | Nome do banco                                            |
-| `DATABASE_URL`       | String de conexão usada pela API                         |
-| `PORT`               | Porta da API (padrão: 3000)                              |
-| `JWT_SECRET`         | Segredo para assinar o access token                      |
-| `JWT_REFRESH_SECRET` | Segredo reservado para o refresh token                   |
+| Variável             | Descrição                                              |
+| -------------------- | ------------------------------------------------------ |
+| `POSTGRES_USER`      | Usuário do PostgreSQL                                  |
+| `POSTGRES_PASSWORD`  | Senha do PostgreSQL (também usada pelo Docker Compose) |
+| `POSTGRES_DB`        | Nome do banco                                          |
+| `DATABASE_URL`       | String de conexão usada pela API                       |
+| `PORT`               | Porta da API (padrão: 3000)                            |
+| `JWT_SECRET`         | Segredo para assinar o access token                    |
+| `JWT_REFRESH_SECRET` | Segredo reservado para o refresh token                 |
 
 > Nunca faça commit do arquivo `.env`.
 
 ## 📡 Endpoints
 
-| Método | Rota            | Descrição                         | Auth |
-| ------ | --------------- | --------------------------------- | ---- |
-| POST   | `/auth/signup`  | Cadastra um novo usuário          | Não  |
-| POST   | `/auth/signin`  | Autentica e retorna o access token | Não  |
-| GET    | `/auth/me`      | Retorna os dados do usuário logado | Sim  |
+Todas as rotas ficam sob o prefixo `/auth`.
 
-🚧 A rota `/auth/refresh` será adicionada junto com a gravação do refresh token no login.
+| Método | Rota                        | Descrição                                  | Corpo / query        | Auth |
+| ------ | --------------------------- | ------------------------------------------ | -------------------- | ---- |
+| POST   | `/auth/signup`              | Cadastra um novo usuário                   | dados do cadastro    | Não  |
+| POST   | `/auth/signin`              | Autentica e retorna os tokens              | e-mail e senha       | Não  |
+| POST   | `/auth/refresh`             | Renova o access token                      | refresh token        | Não  |
+| GET    | `/auth/verify-email`        | Confirma o e-mail do usuário               | query `token`        | Não  |
+| POST   | `/auth/resend-verification` | Reenvia o e-mail de verificação            | `email`              | Não  |
+| POST   | `/auth/forgot-password`     | Solicita a redefinição de senha por e-mail | `email`              | Não  |
+| POST   | `/auth/reset-password`      | Define uma nova senha a partir do token    | `token` e `password` | Não  |
+| GET    | `/auth/me`                  | Retorna os dados do usuário logado         | —                    | Sim  |
 
 ## 👩‍💻 Autora
 
