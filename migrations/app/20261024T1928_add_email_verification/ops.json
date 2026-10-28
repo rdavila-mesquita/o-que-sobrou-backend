@@ -1,0 +1,206 @@
+[
+  {
+    "id": "table.email_verification",
+    "label": "Create table \"email_verification\"",
+    "summary": "Creates table \"email_verification\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "email_verification"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"email_verification\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"email_verification\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"email_verification\"",
+        "sql": "CREATE TABLE \"public\".\"email_verification\" (\n  \"created_at\" timestamptz DEFAULT (now()) NOT NULL,\n  \"expires_at\" timestamptz NOT NULL,\n  \"id\" text NOT NULL,\n  \"token_hash\" text NOT NULL,\n  \"used_at\" timestamptz,\n  \"user_id\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"email_verification\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"email_verification\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.users.email_verified_at",
+    "label": "Add column \"email_verified_at\" to \"users\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "email_verified_at",
+        "table": "users"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"email_verified_at\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "users",
+          "email_verified_at"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"email_verified_at\"",
+        "sql": "ALTER TABLE \"public\".\"users\" ADD COLUMN \"email_verified_at\" timestamptz"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"email_verified_at\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "users",
+          "email_verified_at"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.email_verification.email_verification_token_hash_key",
+    "label": "Add unique constraint on \"email_verification\" (token_hash)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "email_verification_token_hash_key",
+        "table": "email_verification"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"email_verification_token_hash_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "email_verification_token_hash_key",
+          "public",
+          "\"public\".\"email_verification\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"email_verification_token_hash_key\"",
+        "sql": "ALTER TABLE \"public\".\"email_verification\" ADD CONSTRAINT \"email_verification_token_hash_key\" UNIQUE (\"token_hash\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"email_verification_token_hash_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "email_verification_token_hash_key",
+          "public",
+          "\"public\".\"email_verification\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.email_verification.email_verification_user_id_idx_6c952402",
+    "label": "Create index \"email_verification_user_id_idx_6c952402\" on \"email_verification\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "email_verification_user_id_idx_6c952402",
+        "table": "email_verification"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"email_verification_user_id_idx_6c952402\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"email_verification_user_id_idx_6c952402\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"email_verification_user_id_idx_6c952402\"",
+        "sql": "CREATE INDEX \"email_verification_user_id_idx_6c952402\" ON \"public\".\"email_verification\" (\"user_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"email_verification_user_id_idx_6c952402\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"email_verification_user_id_idx_6c952402\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.email_verification.email_verification_user_id_fkey",
+    "label": "Add foreign key \"email_verification_user_id_fkey\" on \"email_verification\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "email_verification_user_id_fkey",
+        "table": "email_verification"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"email_verification_user_id_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "email_verification_user_id_fkey",
+          "public",
+          "\"public\".\"email_verification\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"email_verification_user_id_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"email_verification\"\nADD CONSTRAINT \"email_verification_user_id_fkey\"\nFOREIGN KEY (\"user_id\")\nREFERENCES \"public\".\"users\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"email_verification_user_id_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "email_verification_user_id_fkey",
+          "public",
+          "\"public\".\"email_verification\""
+        ]
+      }
+    ]
+  }
+]

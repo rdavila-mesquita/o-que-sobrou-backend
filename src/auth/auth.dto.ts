@@ -1,5 +1,4 @@
-import type { Timestamp } from '@prisma/orm-postgres/target/codec-types';
-import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsString, IsStrongPassword } from 'class-validator';
 
 export class SignUpDTO {
   @IsString()
@@ -11,7 +10,13 @@ export class SignUpDTO {
   email!: string;
 
   @IsString()
-  @MinLength(8)
+  @IsStrongPassword({
+    minLength: 8,
+    minLowercase: 1,
+    minUppercase: 1,
+    minNumbers: 1,
+    minSymbols: 1
+  })
   password!: string;
 }
 
@@ -22,11 +27,39 @@ export class SignInDTO {
 
   @IsString()
   @IsNotEmpty()
-  password!: string;
+  password!: string; 
 }
 
 export class RefreshTokenDTO{
   @IsString()
   @IsNotEmpty()
   refreshToken!: string;
+}
+
+export class ResendVerificationDTO{
+  @IsEmail()
+  @IsNotEmpty()
+  email!: string;
+}
+
+export class ForgotPasswordDTO{
+  @IsEmail()
+  @IsNotEmpty()
+  email!: string;
+}
+
+export class ResetPasswordDTO{
+  @IsNotEmpty()
+  @IsString()
+  token!: string;
+
+  @IsString()
+  @IsStrongPassword({
+    minLength: 8,
+    minLowercase: 1,
+    minUppercase: 1,
+    minNumbers: 1,
+    minSymbols: 1
+  })
+  password!: string;
 }

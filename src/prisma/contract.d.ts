@@ -18,9 +18,9 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'53dabd141b4a4543c65872c0e971bfc8d0d6ef89d917a345aeb85db10a7bbfc3'>;
+  StorageHashBase<'f6a45db6d3f3f5e1198da9c09f7313aa4e0ed6efb4dba5f9f43bd947d111ed24'>;
 export type ExecutionHash =
-  ExecutionHashBase<'318921a898d044e766a9dfdc2a97476a41fcb7cb57d6cb414ebeef105023a474'>;
+  ExecutionHashBase<'cfa930cfffcb672f2fc741375e09efe6db53ddf44d46b9a5f88833a4c000d846'>;
 export type ProfileHash =
   ProfileHashBase<'3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2'>;
 
@@ -234,6 +234,14 @@ type DefaultLiteralValue<CodecId extends string, Encoded> = CodecId extends keyo
 
 export type FieldOutputTypes = {
   readonly public: {
+    readonly EmailVerificationToken: {
+      readonly createdAt: CodecTypes['pg/timestamptz-date@1']['output'];
+      readonly expiresAt: CodecTypes['pg/timestamptz-date@1']['output'];
+      readonly id: CodecTypes['pg/text@1']['output'];
+      readonly tokenHash: CodecTypes['pg/text@1']['output'];
+      readonly usedAt: CodecTypes['pg/timestamptz-date@1']['output'] | null;
+      readonly userId: CodecTypes['pg/text@1']['output'];
+    };
     readonly Favorite: {
       readonly createdAt: CodecTypes['pg/timestamptz-date@1']['output'];
       readonly recipeId: CodecTypes['pg/text@1']['output'];
@@ -324,6 +332,15 @@ export type FieldOutputTypes = {
       readonly source: 'TACO' | 'USDA' | 'CUSTOM';
       readonly sugarsG: Numeric<8, 2> | null;
     };
+    readonly PasswordResetToken: {
+      readonly createdAt: CodecTypes['pg/timestamptz-date@1']['output'];
+      readonly expiresAt: CodecTypes['pg/timestamptz-date@1']['output'];
+      readonly id: CodecTypes['pg/text@1']['output'];
+      readonly revokedAt: CodecTypes['pg/timestamptz-date@1']['output'] | null;
+      readonly tokenHash: CodecTypes['pg/text@1']['output'];
+      readonly usedAt: CodecTypes['pg/timestamptz-date@1']['output'] | null;
+      readonly userId: CodecTypes['pg/text@1']['output'];
+    };
     readonly Recipe: {
       readonly cookTimeMinutes: CodecTypes['pg/int4@1']['output'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-date@1']['output'];
@@ -394,6 +411,7 @@ export type FieldOutputTypes = {
     readonly User: {
       readonly createdAt: CodecTypes['pg/timestamptz-date@1']['output'];
       readonly email: CodecTypes['pg/text@1']['output'];
+      readonly emailVerifiedAt: CodecTypes['pg/timestamptz-date@1']['output'] | null;
       readonly id: CodecTypes['pg/text@1']['output'];
       readonly name: CodecTypes['pg/text@1']['output'];
       readonly passwordHash: CodecTypes['pg/text@1']['output'];
@@ -403,6 +421,14 @@ export type FieldOutputTypes = {
 };
 export type FieldInputTypes = {
   readonly public: {
+    readonly EmailVerificationToken: {
+      readonly createdAt: CodecTypes['pg/timestamptz-date@1']['input'];
+      readonly expiresAt: CodecTypes['pg/timestamptz-date@1']['input'];
+      readonly id: CodecTypes['pg/text@1']['input'];
+      readonly tokenHash: CodecTypes['pg/text@1']['input'];
+      readonly usedAt: CodecTypes['pg/timestamptz-date@1']['input'] | null;
+      readonly userId: CodecTypes['pg/text@1']['input'];
+    };
     readonly Favorite: {
       readonly createdAt: CodecTypes['pg/timestamptz-date@1']['input'];
       readonly recipeId: CodecTypes['pg/text@1']['input'];
@@ -493,6 +519,15 @@ export type FieldInputTypes = {
       readonly source: 'TACO' | 'USDA' | 'CUSTOM';
       readonly sugarsG: CodecTypes['pg/numeric@1']['input'] | null;
     };
+    readonly PasswordResetToken: {
+      readonly createdAt: CodecTypes['pg/timestamptz-date@1']['input'];
+      readonly expiresAt: CodecTypes['pg/timestamptz-date@1']['input'];
+      readonly id: CodecTypes['pg/text@1']['input'];
+      readonly revokedAt: CodecTypes['pg/timestamptz-date@1']['input'] | null;
+      readonly tokenHash: CodecTypes['pg/text@1']['input'];
+      readonly usedAt: CodecTypes['pg/timestamptz-date@1']['input'] | null;
+      readonly userId: CodecTypes['pg/text@1']['input'];
+    };
     readonly Recipe: {
       readonly cookTimeMinutes: CodecTypes['pg/int4@1']['input'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-date@1']['input'];
@@ -563,6 +598,7 @@ export type FieldInputTypes = {
     readonly User: {
       readonly createdAt: CodecTypes['pg/timestamptz-date@1']['input'];
       readonly email: CodecTypes['pg/text@1']['input'];
+      readonly emailVerifiedAt: CodecTypes['pg/timestamptz-date@1']['input'] | null;
       readonly id: CodecTypes['pg/text@1']['input'];
       readonly name: CodecTypes['pg/text@1']['input'];
       readonly passwordHash: CodecTypes['pg/text@1']['input'];
@@ -572,6 +608,14 @@ export type FieldInputTypes = {
 };
 export type StorageColumnTypes = {
   readonly public: {
+    readonly email_verification: {
+      readonly created_at: CodecTypes['pg/timestamptz-date@1']['output'];
+      readonly expires_at: CodecTypes['pg/timestamptz-date@1']['output'];
+      readonly id: CodecTypes['pg/text@1']['output'];
+      readonly token_hash: CodecTypes['pg/text@1']['output'];
+      readonly used_at: CodecTypes['pg/timestamptz-date@1']['output'] | null;
+      readonly user_id: CodecTypes['pg/text@1']['output'];
+    };
     readonly favorites: {
       readonly created_at: CodecTypes['pg/timestamptz-date@1']['output'];
       readonly recipe_id: CodecTypes['pg/text@1']['output'];
@@ -662,6 +706,15 @@ export type StorageColumnTypes = {
       readonly source: 'TACO' | 'USDA' | 'CUSTOM';
       readonly sugars_g: Numeric<8, 2> | null;
     };
+    readonly password_reset: {
+      readonly created_at: CodecTypes['pg/timestamptz-date@1']['output'];
+      readonly expires_at: CodecTypes['pg/timestamptz-date@1']['output'];
+      readonly id: CodecTypes['pg/text@1']['output'];
+      readonly revoked_at: CodecTypes['pg/timestamptz-date@1']['output'] | null;
+      readonly token_hash: CodecTypes['pg/text@1']['output'];
+      readonly used_at: CodecTypes['pg/timestamptz-date@1']['output'] | null;
+      readonly user_id: CodecTypes['pg/text@1']['output'];
+    };
     readonly recipe_ingredients: {
       readonly from_pantry: CodecTypes['pg/bool@1']['output'];
       readonly grams: Numeric<10, 2> | null;
@@ -732,6 +785,7 @@ export type StorageColumnTypes = {
     readonly users: {
       readonly created_at: CodecTypes['pg/timestamptz-date@1']['output'];
       readonly email: CodecTypes['pg/text@1']['output'];
+      readonly email_verified_at: CodecTypes['pg/timestamptz-date@1']['output'] | null;
       readonly id: CodecTypes['pg/text@1']['output'];
       readonly name: CodecTypes['pg/text@1']['output'];
       readonly password_hash: CodecTypes['pg/text@1']['output'];
@@ -741,6 +795,14 @@ export type StorageColumnTypes = {
 };
 export type StorageColumnInputTypes = {
   readonly public: {
+    readonly email_verification: {
+      readonly created_at: CodecTypes['pg/timestamptz-date@1']['input'];
+      readonly expires_at: CodecTypes['pg/timestamptz-date@1']['input'];
+      readonly id: CodecTypes['pg/text@1']['input'];
+      readonly token_hash: CodecTypes['pg/text@1']['input'];
+      readonly used_at: CodecTypes['pg/timestamptz-date@1']['input'] | null;
+      readonly user_id: CodecTypes['pg/text@1']['input'];
+    };
     readonly favorites: {
       readonly created_at: CodecTypes['pg/timestamptz-date@1']['input'];
       readonly recipe_id: CodecTypes['pg/text@1']['input'];
@@ -831,6 +893,15 @@ export type StorageColumnInputTypes = {
       readonly source: 'TACO' | 'USDA' | 'CUSTOM';
       readonly sugars_g: CodecTypes['pg/numeric@1']['input'] | null;
     };
+    readonly password_reset: {
+      readonly created_at: CodecTypes['pg/timestamptz-date@1']['input'];
+      readonly expires_at: CodecTypes['pg/timestamptz-date@1']['input'];
+      readonly id: CodecTypes['pg/text@1']['input'];
+      readonly revoked_at: CodecTypes['pg/timestamptz-date@1']['input'] | null;
+      readonly token_hash: CodecTypes['pg/text@1']['input'];
+      readonly used_at: CodecTypes['pg/timestamptz-date@1']['input'] | null;
+      readonly user_id: CodecTypes['pg/text@1']['input'];
+    };
     readonly recipe_ingredients: {
       readonly from_pantry: CodecTypes['pg/bool@1']['input'];
       readonly grams: CodecTypes['pg/numeric@1']['input'] | null;
@@ -901,6 +972,7 @@ export type StorageColumnInputTypes = {
     readonly users: {
       readonly created_at: CodecTypes['pg/timestamptz-date@1']['input'];
       readonly email: CodecTypes['pg/text@1']['input'];
+      readonly email_verified_at: CodecTypes['pg/timestamptz-date@1']['input'] | null;
       readonly id: CodecTypes['pg/text@1']['input'];
       readonly name: CodecTypes['pg/text@1']['input'];
       readonly password_hash: CodecTypes['pg/text@1']['input'];
@@ -910,6 +982,16 @@ export type StorageColumnInputTypes = {
 };
 
 export namespace Models {
+  export type public_EmailVerificationToken = {
+    createdAt: CodecTypes['pg/timestamptz-date@1']['output'];
+    expiresAt: CodecTypes['pg/timestamptz-date@1']['output'];
+    id: CodecTypes['pg/text@1']['output'];
+    tokenHash: CodecTypes['pg/text@1']['output'];
+    usedAt: CodecTypes['pg/timestamptz-date@1']['output'] | null;
+    userId: CodecTypes['pg/text@1']['output'];
+    user: public_User;
+    readonly [RelationKeys]?: 'user';
+  };
   export type public_Favorite = {
     createdAt: CodecTypes['pg/timestamptz-date@1']['output'];
     recipeId: CodecTypes['pg/text@1']['output'];
@@ -1010,6 +1092,17 @@ export namespace Models {
     recipeIngredients: public_RecipeIngredient[];
     readonly [RelationKeys]?: 'recipeIngredients';
   };
+  export type public_PasswordResetToken = {
+    createdAt: CodecTypes['pg/timestamptz-date@1']['output'];
+    expiresAt: CodecTypes['pg/timestamptz-date@1']['output'];
+    id: CodecTypes['pg/text@1']['output'];
+    revokedAt: CodecTypes['pg/timestamptz-date@1']['output'] | null;
+    tokenHash: CodecTypes['pg/text@1']['output'];
+    usedAt: CodecTypes['pg/timestamptz-date@1']['output'] | null;
+    userId: CodecTypes['pg/text@1']['output'];
+    user: public_User;
+    readonly [RelationKeys]?: 'user';
+  };
   export type public_Recipe = {
     cookTimeMinutes: CodecTypes['pg/int4@1']['output'] | null;
     createdAt: CodecTypes['pg/timestamptz-date@1']['output'];
@@ -1097,26 +1190,37 @@ export namespace Models {
   export type public_User = {
     createdAt: CodecTypes['pg/timestamptz-date@1']['output'];
     email: CodecTypes['pg/text@1']['output'];
+    emailVerifiedAt: CodecTypes['pg/timestamptz-date@1']['output'] | null;
     id: CodecTypes['pg/text@1']['output'];
     name: CodecTypes['pg/text@1']['output'];
     passwordHash: CodecTypes['pg/text@1']['output'];
     updatedAt: CodecTypes['pg/timestamptz-date@1']['output'];
+    email_verification: public_EmailVerificationToken[];
     favorites: public_Favorite[];
     generationRequests: public_GenerationRequest[];
     healthProfile: public_HealthProfile | null;
+    password_reset: public_PasswordResetToken[];
     recipes: public_Recipe[];
     refreshTokens: public_RefreshToken[];
     readonly [RelationKeys]?:
-      'favorites' | 'generationRequests' | 'healthProfile' | 'recipes' | 'refreshTokens';
+      | 'email_verification'
+      | 'favorites'
+      | 'generationRequests'
+      | 'healthProfile'
+      | 'password_reset'
+      | 'recipes'
+      | 'refreshTokens';
   };
 }
 
 export declare const models: {
   public: {
+    EmailVerificationToken: Models.public_EmailVerificationToken;
     Favorite: Models.public_Favorite;
     GenerationRequest: Models.public_GenerationRequest;
     HealthProfile: Models.public_HealthProfile;
     Ingredient: Models.public_Ingredient;
+    PasswordResetToken: Models.public_PasswordResetToken;
     Recipe: Models.public_Recipe;
     RecipeIngredient: Models.public_RecipeIngredient;
     RecipeNutrition: Models.public_RecipeNutrition;
@@ -1144,6 +1248,71 @@ type ContractBase = Omit<
         readonly kind: 'postgres-schema';
         readonly entries: {
           readonly table: {
+            readonly email_verification: {
+              columns: {
+                readonly created_at: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-date@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                  readonly many: false;
+                };
+                readonly expires_at: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-date@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly id: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly token_hash: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly used_at: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-date@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly user_id: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [{ readonly columns: readonly ['token_hash'] }];
+              indexes: readonly [
+                {
+                  readonly name: 'email_verification_user_id_idx_6c952402';
+                  readonly prefix: 'email_verification_user_id_idx';
+                  readonly columns: readonly ['user_id'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'email_verification';
+                    readonly columns: readonly ['user_id'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'users';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
             readonly favorites: {
               columns: {
                 readonly created_at: {
@@ -1574,6 +1743,77 @@ type ContractBase = Omit<
                 },
               ];
               foreignKeys: readonly [];
+            };
+            readonly password_reset: {
+              columns: {
+                readonly created_at: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-date@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                  readonly many: false;
+                };
+                readonly expires_at: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-date@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly id: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly revoked_at: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-date@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly token_hash: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly used_at: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-date@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly user_id: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [{ readonly columns: readonly ['token_hash'] }];
+              indexes: readonly [
+                {
+                  readonly name: 'password_reset_user_id_idx_6c952402';
+                  readonly prefix: 'password_reset_user_id_idx';
+                  readonly columns: readonly ['user_id'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'password_reset';
+                    readonly columns: readonly ['user_id'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'users';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
             };
             readonly recipe_ingredients: {
               columns: {
@@ -2050,6 +2290,12 @@ type ContractBase = Omit<
                   readonly nullable: false;
                   readonly many: false;
                 };
+                readonly email_verified_at: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-date@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
                 readonly id: {
                   readonly dataType: 'pg/text';
                   readonly codecId: 'pg/text@1';
@@ -2163,6 +2409,10 @@ type ContractBase = Omit<
   readonly target: 'postgres';
   readonly targetFamily: 'sql';
   readonly roots: {
+    readonly email_verification: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'EmailVerificationToken';
+    };
     readonly favorites: { readonly namespace: 'public' & NamespaceId; readonly model: 'Favorite' };
     readonly generation_requests: {
       readonly namespace: 'public' & NamespaceId;
@@ -2175,6 +2425,10 @@ type ContractBase = Omit<
     readonly ingredients: {
       readonly namespace: 'public' & NamespaceId;
       readonly model: 'Ingredient';
+    };
+    readonly password_reset: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'PasswordResetToken';
     };
     readonly recipe_ingredients: {
       readonly namespace: 'public' & NamespaceId;
@@ -2199,6 +2453,66 @@ type ContractBase = Omit<
     readonly namespaces: {
       readonly public: {
         readonly models: {
+          readonly EmailVerificationToken: {
+            readonly fields: {
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-date@1';
+                };
+              };
+              readonly expiresAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-date@1';
+                };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly tokenHash: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly usedAt: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-date@1';
+                };
+              };
+              readonly userId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+            };
+            readonly relations: {
+              readonly user: {
+                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['userId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'email_verification';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly createdAt: { readonly column: 'created_at' };
+                readonly expiresAt: { readonly column: 'expires_at' };
+                readonly id: { readonly column: 'id' };
+                readonly tokenHash: { readonly column: 'token_hash' };
+                readonly usedAt: { readonly column: 'used_at' };
+                readonly userId: { readonly column: 'user_id' };
+              };
+            };
+          };
           readonly Favorite: {
             readonly fields: {
               readonly createdAt: {
@@ -2609,6 +2923,74 @@ type ContractBase = Omit<
                 readonly sodiumMg: { readonly column: 'sodium_mg' };
                 readonly source: { readonly column: 'source' };
                 readonly sugarsG: { readonly column: 'sugars_g' };
+              };
+            };
+          };
+          readonly PasswordResetToken: {
+            readonly fields: {
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-date@1';
+                };
+              };
+              readonly expiresAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-date@1';
+                };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly revokedAt: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-date@1';
+                };
+              };
+              readonly tokenHash: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly usedAt: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-date@1';
+                };
+              };
+              readonly userId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+            };
+            readonly relations: {
+              readonly user: {
+                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['userId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'password_reset';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly createdAt: { readonly column: 'created_at' };
+                readonly expiresAt: { readonly column: 'expires_at' };
+                readonly id: { readonly column: 'id' };
+                readonly revokedAt: { readonly column: 'revoked_at' };
+                readonly tokenHash: { readonly column: 'token_hash' };
+                readonly usedAt: { readonly column: 'used_at' };
+                readonly userId: { readonly column: 'user_id' };
               };
             };
           };
@@ -3091,6 +3473,13 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
+              readonly emailVerifiedAt: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-date@1';
+                };
+              };
               readonly id: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
@@ -3112,6 +3501,17 @@ type ContractBase = Omit<
               };
             };
             readonly relations: {
+              readonly email_verification: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'EmailVerificationToken';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['userId'];
+                };
+              };
               readonly favorites: {
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
@@ -3146,6 +3546,17 @@ type ContractBase = Omit<
                   readonly targetFields: readonly ['userId'];
                 };
               };
+              readonly password_reset: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'PasswordResetToken';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['userId'];
+                };
+              };
               readonly recipes: {
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
@@ -3175,6 +3586,7 @@ type ContractBase = Omit<
               readonly fields: {
                 readonly createdAt: { readonly column: 'created_at' };
                 readonly email: { readonly column: 'email' };
+                readonly emailVerifiedAt: { readonly column: 'email_verified_at' };
                 readonly id: { readonly column: 'id' };
                 readonly name: { readonly column: 'name' };
                 readonly passwordHash: { readonly column: 'password_hash' };
@@ -3306,6 +3718,14 @@ type ContractBase = Omit<
         {
           readonly onCreate: { readonly id: 'cuid2'; readonly kind: 'generator' };
           readonly ref: {
+            readonly entry: 'email_verification';
+            readonly field: 'id';
+            readonly namespace: 'public';
+          };
+        },
+        {
+          readonly onCreate: { readonly id: 'cuid2'; readonly kind: 'generator' };
+          readonly ref: {
             readonly entry: 'generation_requests';
             readonly field: 'id';
             readonly namespace: 'public';
@@ -3332,6 +3752,14 @@ type ContractBase = Omit<
           readonly onCreate: { readonly id: 'cuid2'; readonly kind: 'generator' };
           readonly ref: {
             readonly entry: 'ingredients';
+            readonly field: 'id';
+            readonly namespace: 'public';
+          };
+        },
+        {
+          readonly onCreate: { readonly id: 'cuid2'; readonly kind: 'generator' };
+          readonly ref: {
+            readonly entry: 'password_reset';
             readonly field: 'id';
             readonly namespace: 'public';
           };
