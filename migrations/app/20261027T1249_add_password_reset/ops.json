@@ -1,0 +1,164 @@
+[
+  {
+    "id": "table.password_reset",
+    "label": "Create table \"password_reset\"",
+    "summary": "Creates table \"password_reset\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "password_reset"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"password_reset\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"password_reset\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"password_reset\"",
+        "sql": "CREATE TABLE \"public\".\"password_reset\" (\n  \"created_at\" timestamptz DEFAULT (now()) NOT NULL,\n  \"expires_at\" timestamptz NOT NULL,\n  \"id\" text NOT NULL,\n  \"token_hash\" text NOT NULL,\n  \"used_at\" timestamptz,\n  \"user_id\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"password_reset\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"password_reset\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.password_reset.password_reset_token_hash_key",
+    "label": "Add unique constraint on \"password_reset\" (token_hash)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "password_reset_token_hash_key",
+        "table": "password_reset"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"password_reset_token_hash_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "password_reset_token_hash_key",
+          "public",
+          "\"public\".\"password_reset\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"password_reset_token_hash_key\"",
+        "sql": "ALTER TABLE \"public\".\"password_reset\" ADD CONSTRAINT \"password_reset_token_hash_key\" UNIQUE (\"token_hash\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"password_reset_token_hash_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "password_reset_token_hash_key",
+          "public",
+          "\"public\".\"password_reset\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.password_reset.password_reset_user_id_idx_6c952402",
+    "label": "Create index \"password_reset_user_id_idx_6c952402\" on \"password_reset\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "password_reset_user_id_idx_6c952402",
+        "table": "password_reset"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"password_reset_user_id_idx_6c952402\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"password_reset_user_id_idx_6c952402\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"password_reset_user_id_idx_6c952402\"",
+        "sql": "CREATE INDEX \"password_reset_user_id_idx_6c952402\" ON \"public\".\"password_reset\" (\"user_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"password_reset_user_id_idx_6c952402\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"password_reset_user_id_idx_6c952402\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.password_reset.password_reset_user_id_fkey",
+    "label": "Add foreign key \"password_reset_user_id_fkey\" on \"password_reset\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "password_reset_user_id_fkey",
+        "table": "password_reset"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"password_reset_user_id_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "password_reset_user_id_fkey",
+          "public",
+          "\"public\".\"password_reset\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"password_reset_user_id_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"password_reset\"\nADD CONSTRAINT \"password_reset_user_id_fkey\"\nFOREIGN KEY (\"user_id\")\nREFERENCES \"public\".\"users\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"password_reset_user_id_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "password_reset_user_id_fkey",
+          "public",
+          "\"public\".\"password_reset\""
+        ]
+      }
+    ]
+  }
+]

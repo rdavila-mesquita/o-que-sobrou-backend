@@ -1,0 +1,44 @@
+[
+  {
+    "id": "column.public.password_reset.revoked_at",
+    "label": "Add column \"revoked_at\" to \"password_reset\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "revoked_at",
+        "table": "password_reset"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"revoked_at\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "password_reset",
+          "revoked_at"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"revoked_at\"",
+        "sql": "ALTER TABLE \"public\".\"password_reset\" ADD COLUMN \"revoked_at\" timestamptz"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"revoked_at\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "password_reset",
+          "revoked_at"
+        ]
+      }
+    ]
+  }
+]
