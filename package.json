@@ -23,7 +23,9 @@
     "migration:show": "prisma migration show",
     "migration:status": "prisma migration status",
     "start": "node dist/server.mjs",
-    "test": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js"
+    "test": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js",
+    "test:unit": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js --testPathIgnorePatterns=\\.e2e-spec\\.ts$",
+    "test:e2e": "node --env-file=.env.test --experimental-vm-modules ./node_modules/jest/bin/jest.js --testRegex=.*\\.e2e-spec\\.ts$"
   },
   "dependencies": {
     "@nestjs/common": "^12.1.2",

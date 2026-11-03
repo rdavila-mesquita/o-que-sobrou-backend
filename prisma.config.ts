@@ -4,7 +4,7 @@ import { nodeBuild } from "@prisma/composer/node/control";
 import { defineConfig as ormConfig } from "@prisma/orm-postgres/config";
 import { definePrismaConfig } from "prisma/config";
 
-process.loadEnvFile();
+process.loadEnvFile(".env");
 
 export default definePrismaConfig({
   skills: {
