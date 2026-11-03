@@ -25,13 +25,13 @@ API do **O que sobrou**, um app que vai gerar receitas com inteligência artific
 
 ## 🔜 Próximos passos
 
-- Popular o catálogo de ingredientes (base TACO) com seed
-- Integração com IA para gerar receitas a partir dos ingredientes
-- Cálculo do valor nutricional pelo backend (e não pela IA)
-- Validador de segurança considerando condições de saúde e alérgenos (ex.: diabetes)
-- Histórico e favoritos de receitas
-- Ampliar os testes automatizados
-- Deploy
+- [X] Popular o catálogo de ingredientes (base TACO) com seed
+- [ ] Integração com IA para gerar receitas a partir dos ingredientes
+- [ ] Cálculo do valor nutricional pelo backend (e não pela IA)
+- [ ] Validador de segurança considerando condições de saúde e alérgenos (ex.: diabetes)
+- [ ] Histórico e favoritos de receitas
+- [ ] Ampliar os testes automatizados
+- [ ] Deploy
 
 ## 🧠 Decisões de projeto
 
