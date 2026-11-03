@@ -1,0 +1,242 @@
+[
+  {
+    "id": "table.pantry_item",
+    "label": "Create table \"pantry_item\"",
+    "summary": "Creates table \"pantry_item\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "pantry_item"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"pantry_item\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"pantry_item\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"pantry_item\"",
+        "sql": "CREATE TABLE \"public\".\"pantry_item\" (\n  \"created_at\" timestamptz DEFAULT (now()) NOT NULL,\n  \"custom_name\" text,\n  \"id\" text NOT NULL,\n  \"ingredient_id\" text,\n  \"quantity\" numeric(10,2),\n  \"unit\" text,\n  \"updated_at\" timestamptz NOT NULL,\n  \"user_id\" text NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"pantry_item_unit_check_daaa4240\" CHECK (\"unit\" IN ('G', 'KG', 'ML', 'L', 'XICARA', 'COLHER_SOPA', 'COLHER_CHA', 'UNIDADE', 'FATIA', 'DENTE', 'PITADA', 'A_GOSTO'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"pantry_item\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"pantry_item\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.pantry_item.pantry_item_ingredient_id_idx_30032a11",
+    "label": "Create index \"pantry_item_ingredient_id_idx_30032a11\" on \"pantry_item\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "pantry_item_ingredient_id_idx_30032a11",
+        "table": "pantry_item"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"pantry_item_ingredient_id_idx_30032a11\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"pantry_item_ingredient_id_idx_30032a11\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"pantry_item_ingredient_id_idx_30032a11\"",
+        "sql": "CREATE INDEX \"pantry_item_ingredient_id_idx_30032a11\" ON \"public\".\"pantry_item\" (\"ingredient_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"pantry_item_ingredient_id_idx_30032a11\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"pantry_item_ingredient_id_idx_30032a11\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.pantry_item.pantry_item_user_id_idx_6c952402",
+    "label": "Create index \"pantry_item_user_id_idx_6c952402\" on \"pantry_item\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "pantry_item_user_id_idx_6c952402",
+        "table": "pantry_item"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"pantry_item_user_id_idx_6c952402\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"pantry_item_user_id_idx_6c952402\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"pantry_item_user_id_idx_6c952402\"",
+        "sql": "CREATE INDEX \"pantry_item_user_id_idx_6c952402\" ON \"public\".\"pantry_item\" (\"user_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"pantry_item_user_id_idx_6c952402\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"pantry_item_user_id_idx_6c952402\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.pantry_item.pantry_item_user_id_ingredient_id_idx_e46585f1",
+    "label": "Create index \"pantry_item_user_id_ingredient_id_idx_e46585f1\" on \"pantry_item\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "pantry_item_user_id_ingredient_id_idx_e46585f1",
+        "table": "pantry_item"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"pantry_item_user_id_ingredient_id_idx_e46585f1\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"pantry_item_user_id_ingredient_id_idx_e46585f1\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"pantry_item_user_id_ingredient_id_idx_e46585f1\"",
+        "sql": "CREATE INDEX \"pantry_item_user_id_ingredient_id_idx_e46585f1\" ON \"public\".\"pantry_item\" (\"user_id\", \"ingredient_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"pantry_item_user_id_ingredient_id_idx_e46585f1\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"pantry_item_user_id_ingredient_id_idx_e46585f1\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.pantry_item.pantry_item_user_id_fkey",
+    "label": "Add foreign key \"pantry_item_user_id_fkey\" on \"pantry_item\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "pantry_item_user_id_fkey",
+        "table": "pantry_item"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"pantry_item_user_id_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "pantry_item_user_id_fkey",
+          "public",
+          "\"public\".\"pantry_item\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"pantry_item_user_id_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"pantry_item\"\nADD CONSTRAINT \"pantry_item_user_id_fkey\"\nFOREIGN KEY (\"user_id\")\nREFERENCES \"public\".\"users\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"pantry_item_user_id_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "pantry_item_user_id_fkey",
+          "public",
+          "\"public\".\"pantry_item\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.pantry_item.pantry_item_ingredient_id_fkey",
+    "label": "Add foreign key \"pantry_item_ingredient_id_fkey\" on \"pantry_item\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "pantry_item_ingredient_id_fkey",
+        "table": "pantry_item"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"pantry_item_ingredient_id_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "pantry_item_ingredient_id_fkey",
+          "public",
+          "\"public\".\"pantry_item\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"pantry_item_ingredient_id_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"pantry_item\"\nADD CONSTRAINT \"pantry_item_ingredient_id_fkey\"\nFOREIGN KEY (\"ingredient_id\")\nREFERENCES \"public\".\"ingredients\" (\"id\")\nON DELETE RESTRICT"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"pantry_item_ingredient_id_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "pantry_item_ingredient_id_fkey",
+          "public",
+          "\"public\".\"pantry_item\""
+        ]
+      }
+    ]
+  }
+]

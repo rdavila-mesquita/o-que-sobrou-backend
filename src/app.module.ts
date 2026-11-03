@@ -4,9 +4,11 @@ import { PrismaModule } from "./prisma.module.js";
 import { EmailModule } from './email/email.module.js';
 import { EmailVerificationModule } from "./email-verification/email-verification.module.js";
 import { PasswordRecoveryModule } from './password-recovery/password-recovery.module.js';
+import { PantryModule } from './pantry/pantry.module.js';
+import { IngredientsModule } from './ingredients/ingredients.module.js';
 
 @Module({
-  imports: [AuthModule, PrismaModule, EmailVerificationModule, EmailModule, PasswordRecoveryModule],
+  imports: [AuthModule, PrismaModule, EmailVerificationModule, EmailModule, PasswordRecoveryModule, PantryModule, IngredientsModule],
   controllers: [],
   providers: []
 })

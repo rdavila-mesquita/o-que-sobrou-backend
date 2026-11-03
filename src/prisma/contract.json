@@ -24,6 +24,10 @@
       "model": "Ingredient",
       "namespace": "public"
     },
+    "pantry_item": {
+      "model": "PantryItem",
+      "namespace": "public"
+    },
     "password_reset": {
       "model": "PasswordResetToken",
       "namespace": "public"
@@ -1001,6 +1005,21 @@
               }
             },
             "relations": {
+              "pantry_item": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "ingredientId"
+                  ]
+                },
+                "to": {
+                  "model": "PantryItem",
+                  "namespace": "public"
+                }
+              },
               "recipeIngredients": {
                 "cardinality": "1:N",
                 "on": {
@@ -1082,6 +1101,140 @@
               },
               "namespaceId": "public",
               "table": "ingredients"
+            }
+          },
+          "PantryItem": {
+            "fields": {
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-date@1",
+                  "kind": "scalar"
+                }
+              },
+              "customName": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "ingredientId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "quantity": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/numeric@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "precision": 10,
+                    "scale": 2
+                  }
+                }
+              },
+              "unit": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "MeasureUnit",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-date@1",
+                  "kind": "scalar"
+                }
+              },
+              "userId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "ingredient": {
+                "cardinality": "N:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "ingredientId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Ingredient",
+                  "namespace": "public"
+                }
+              },
+              "user": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "userId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "createdAt": {
+                  "column": "created_at"
+                },
+                "customName": {
+                  "column": "custom_name"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "ingredientId": {
+                  "column": "ingredient_id"
+                },
+                "quantity": {
+                  "column": "quantity"
+                },
+                "unit": {
+                  "column": "unit"
+                },
+                "updatedAt": {
+                  "column": "updated_at"
+                },
+                "userId": {
+                  "column": "user_id"
+                }
+              },
+              "namespaceId": "public",
+              "table": "pantry_item"
             }
           },
           "PasswordResetToken": {
@@ -2031,6 +2184,21 @@
                   "namespace": "public"
                 }
               },
+              "pantry_item": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "userId"
+                  ]
+                },
+                "to": {
+                  "model": "PantryItem",
+                  "namespace": "public"
+                }
+              },
               "password_reset": {
                 "cardinality": "1:N",
                 "on": {
@@ -2806,6 +2974,140 @@
                   ]
                 }
               ]
+            },
+            "pantry_item": {
+              "checks": [
+                {
+                  "expression": "\"unit\" IN ('G', 'KG', 'ML', 'L', 'XICARA', 'COLHER_SOPA', 'COLHER_CHA', 'UNIDADE', 'FATIA', 'DENTE', 'PITADA', 'A_GOSTO')",
+                  "name": "pantry_item_unit_check_daaa4240",
+                  "prefix": "pantry_item_unit_check"
+                }
+              ],
+              "columns": {
+                "created_at": {
+                  "codecId": "pg/timestamptz-date@1",
+                  "dataType": "pg/timestamptz",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nullable": false
+                },
+                "custom_name": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "id": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "ingredient_id": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "quantity": {
+                  "codecId": "pg/numeric@1",
+                  "dataType": "pg/numeric",
+                  "nullable": true,
+                  "typeParams": {
+                    "precision": 10,
+                    "scale": 2
+                  }
+                },
+                "unit": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "MeasureUnit",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "updated_at": {
+                  "codecId": "pg/timestamptz-date@1",
+                  "dataType": "pg/timestamptz",
+                  "nullable": false
+                },
+                "user_id": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "user_id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "pantry_item"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "users"
+                  }
+                },
+                {
+                  "onDelete": "restrict",
+                  "source": {
+                    "columns": [
+                      "ingredient_id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "pantry_item"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "ingredients"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "ingredient_id"
+                  ],
+                  "name": "pantry_item_ingredient_id_idx_30032a11",
+                  "prefix": "pantry_item_ingredient_id_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "user_id"
+                  ],
+                  "name": "pantry_item_user_id_idx_6c952402",
+                  "prefix": "pantry_item_user_id_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "user_id",
+                    "ingredient_id"
+                  ],
+                  "name": "pantry_item_user_id_ingredient_id_idx_e46585f1",
+                  "prefix": "pantry_item_user_id_ingredient_id_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
             },
             "password_reset": {
               "columns": {
@@ -3612,10 +3914,10 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "f6a45db6d3f3f5e1198da9c09f7313aa4e0ed6efb4dba5f9f43bd947d111ed24"
+    "storageHash": "9653ffa5341f408649279495833c772f0ac7e491a8a0dceb7db6e8d2fa21f81d"
   },
   "execution": {
-    "executionHash": "cfa930cfffcb672f2fc741375e09efe6db53ddf44d46b9a5f88833a4c000d846",
+    "executionHash": "48fca5ae3ca92ef3b56fa6e7239133c463b757734359a67fd12bcaa1a48d9f10",
     "mutations": {
       "defaults": [
         {
@@ -3674,6 +3976,32 @@
           "ref": {
             "entry": "ingredients",
             "field": "id",
+            "namespace": "public"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "cuid2",
+            "kind": "generator"
+          },
+          "ref": {
+            "entry": "pantry_item",
+            "field": "id",
+            "namespace": "public"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "onUpdate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "ref": {
+            "entry": "pantry_item",
+            "field": "updated_at",
             "namespace": "public"
           }
         },
