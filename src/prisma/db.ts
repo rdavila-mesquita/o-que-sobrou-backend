@@ -5,6 +5,7 @@ import "temporal-polyfill/global";
 import service from "../../service.ts";
 import type { Contract } from "./contract.d.ts";
 import contractJson from "./contract.json" with { type: "json" };
+import { contractFromJson } from "@prisma/orm-postgres/static";
 
 function loadComposerDatabase() {
   try {
@@ -14,12 +15,14 @@ function loadComposerDatabase() {
   }
 }
 
+const contract = contractFromJson<Contract>(contractJson);
+
 export const db =
   loadComposerDatabase() ??
   (process.env.DATABASE_URL
-    ? postgres<Contract>({ contractJson, url: process.env.DATABASE_URL })
-    : postgres<Contract>({ contractJson }));
-    
+    ? postgres<Contract>({ contract, url: process.env.DATABASE_URL })
+    : postgres<Contract>({ contract }));
+
 export type Tx = Parameters<Parameters<typeof db.transaction>[0]>[0];
 
 let connection: Promise<void> | undefined;

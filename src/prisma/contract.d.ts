@@ -18,9 +18,9 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'f6a45db6d3f3f5e1198da9c09f7313aa4e0ed6efb4dba5f9f43bd947d111ed24'>;
+  StorageHashBase<'9653ffa5341f408649279495833c772f0ac7e491a8a0dceb7db6e8d2fa21f81d'>;
 export type ExecutionHash =
-  ExecutionHashBase<'cfa930cfffcb672f2fc741375e09efe6db53ddf44d46b9a5f88833a4c000d846'>;
+  ExecutionHashBase<'48fca5ae3ca92ef3b56fa6e7239133c463b757734359a67fd12bcaa1a48d9f10'>;
 export type ProfileHash =
   ProfileHashBase<'3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2'>;
 
@@ -332,6 +332,29 @@ export type FieldOutputTypes = {
       readonly source: 'TACO' | 'USDA' | 'CUSTOM';
       readonly sugarsG: Numeric<8, 2> | null;
     };
+    readonly PantryItem: {
+      readonly createdAt: CodecTypes['pg/timestamptz-date@1']['output'];
+      readonly customName: CodecTypes['pg/text@1']['output'] | null;
+      readonly id: CodecTypes['pg/text@1']['output'];
+      readonly ingredientId: CodecTypes['pg/text@1']['output'] | null;
+      readonly quantity: Numeric<10, 2> | null;
+      readonly unit:
+        | 'G'
+        | 'KG'
+        | 'ML'
+        | 'L'
+        | 'XICARA'
+        | 'COLHER_SOPA'
+        | 'COLHER_CHA'
+        | 'UNIDADE'
+        | 'FATIA'
+        | 'DENTE'
+        | 'PITADA'
+        | 'A_GOSTO'
+        | null;
+      readonly updatedAt: CodecTypes['pg/timestamptz-date@1']['output'];
+      readonly userId: CodecTypes['pg/text@1']['output'];
+    };
     readonly PasswordResetToken: {
       readonly createdAt: CodecTypes['pg/timestamptz-date@1']['output'];
       readonly expiresAt: CodecTypes['pg/timestamptz-date@1']['output'];
@@ -518,6 +541,29 @@ export type FieldInputTypes = {
       readonly sodiumMg: CodecTypes['pg/numeric@1']['input'] | null;
       readonly source: 'TACO' | 'USDA' | 'CUSTOM';
       readonly sugarsG: CodecTypes['pg/numeric@1']['input'] | null;
+    };
+    readonly PantryItem: {
+      readonly createdAt: CodecTypes['pg/timestamptz-date@1']['input'];
+      readonly customName: CodecTypes['pg/text@1']['input'] | null;
+      readonly id: CodecTypes['pg/text@1']['input'];
+      readonly ingredientId: CodecTypes['pg/text@1']['input'] | null;
+      readonly quantity: CodecTypes['pg/numeric@1']['input'] | null;
+      readonly unit:
+        | 'G'
+        | 'KG'
+        | 'ML'
+        | 'L'
+        | 'XICARA'
+        | 'COLHER_SOPA'
+        | 'COLHER_CHA'
+        | 'UNIDADE'
+        | 'FATIA'
+        | 'DENTE'
+        | 'PITADA'
+        | 'A_GOSTO'
+        | null;
+      readonly updatedAt: CodecTypes['pg/timestamptz-date@1']['input'];
+      readonly userId: CodecTypes['pg/text@1']['input'];
     };
     readonly PasswordResetToken: {
       readonly createdAt: CodecTypes['pg/timestamptz-date@1']['input'];
@@ -706,6 +752,29 @@ export type StorageColumnTypes = {
       readonly source: 'TACO' | 'USDA' | 'CUSTOM';
       readonly sugars_g: Numeric<8, 2> | null;
     };
+    readonly pantry_item: {
+      readonly created_at: CodecTypes['pg/timestamptz-date@1']['output'];
+      readonly custom_name: CodecTypes['pg/text@1']['output'] | null;
+      readonly id: CodecTypes['pg/text@1']['output'];
+      readonly ingredient_id: CodecTypes['pg/text@1']['output'] | null;
+      readonly quantity: Numeric<10, 2> | null;
+      readonly unit:
+        | 'G'
+        | 'KG'
+        | 'ML'
+        | 'L'
+        | 'XICARA'
+        | 'COLHER_SOPA'
+        | 'COLHER_CHA'
+        | 'UNIDADE'
+        | 'FATIA'
+        | 'DENTE'
+        | 'PITADA'
+        | 'A_GOSTO'
+        | null;
+      readonly updated_at: CodecTypes['pg/timestamptz-date@1']['output'];
+      readonly user_id: CodecTypes['pg/text@1']['output'];
+    };
     readonly password_reset: {
       readonly created_at: CodecTypes['pg/timestamptz-date@1']['output'];
       readonly expires_at: CodecTypes['pg/timestamptz-date@1']['output'];
@@ -892,6 +961,29 @@ export type StorageColumnInputTypes = {
       readonly sodium_mg: CodecTypes['pg/numeric@1']['input'] | null;
       readonly source: 'TACO' | 'USDA' | 'CUSTOM';
       readonly sugars_g: CodecTypes['pg/numeric@1']['input'] | null;
+    };
+    readonly pantry_item: {
+      readonly created_at: CodecTypes['pg/timestamptz-date@1']['input'];
+      readonly custom_name: CodecTypes['pg/text@1']['input'] | null;
+      readonly id: CodecTypes['pg/text@1']['input'];
+      readonly ingredient_id: CodecTypes['pg/text@1']['input'] | null;
+      readonly quantity: CodecTypes['pg/numeric@1']['input'] | null;
+      readonly unit:
+        | 'G'
+        | 'KG'
+        | 'ML'
+        | 'L'
+        | 'XICARA'
+        | 'COLHER_SOPA'
+        | 'COLHER_CHA'
+        | 'UNIDADE'
+        | 'FATIA'
+        | 'DENTE'
+        | 'PITADA'
+        | 'A_GOSTO'
+        | null;
+      readonly updated_at: CodecTypes['pg/timestamptz-date@1']['input'];
+      readonly user_id: CodecTypes['pg/text@1']['input'];
     };
     readonly password_reset: {
       readonly created_at: CodecTypes['pg/timestamptz-date@1']['input'];
@@ -1089,8 +1181,35 @@ export namespace Models {
     sodiumMg: Numeric<8, 2> | null;
     source: 'TACO' | 'USDA' | 'CUSTOM';
     sugarsG: Numeric<8, 2> | null;
+    pantry_item: public_PantryItem[];
     recipeIngredients: public_RecipeIngredient[];
-    readonly [RelationKeys]?: 'recipeIngredients';
+    readonly [RelationKeys]?: 'pantry_item' | 'recipeIngredients';
+  };
+  export type public_PantryItem = {
+    createdAt: CodecTypes['pg/timestamptz-date@1']['output'];
+    customName: CodecTypes['pg/text@1']['output'] | null;
+    id: CodecTypes['pg/text@1']['output'];
+    ingredientId: CodecTypes['pg/text@1']['output'] | null;
+    quantity: Numeric<10, 2> | null;
+    unit:
+      | 'G'
+      | 'KG'
+      | 'ML'
+      | 'L'
+      | 'XICARA'
+      | 'COLHER_SOPA'
+      | 'COLHER_CHA'
+      | 'UNIDADE'
+      | 'FATIA'
+      | 'DENTE'
+      | 'PITADA'
+      | 'A_GOSTO'
+      | null;
+    updatedAt: CodecTypes['pg/timestamptz-date@1']['output'];
+    userId: CodecTypes['pg/text@1']['output'];
+    ingredient: public_Ingredient | null;
+    user: public_User;
+    readonly [RelationKeys]?: 'ingredient' | 'user';
   };
   export type public_PasswordResetToken = {
     createdAt: CodecTypes['pg/timestamptz-date@1']['output'];
@@ -1199,6 +1318,7 @@ export namespace Models {
     favorites: public_Favorite[];
     generationRequests: public_GenerationRequest[];
     healthProfile: public_HealthProfile | null;
+    pantry_item: public_PantryItem[];
     password_reset: public_PasswordResetToken[];
     recipes: public_Recipe[];
     refreshTokens: public_RefreshToken[];
@@ -1207,6 +1327,7 @@ export namespace Models {
       | 'favorites'
       | 'generationRequests'
       | 'healthProfile'
+      | 'pantry_item'
       | 'password_reset'
       | 'recipes'
       | 'refreshTokens';
@@ -1220,6 +1341,7 @@ export declare const models: {
     GenerationRequest: Models.public_GenerationRequest;
     HealthProfile: Models.public_HealthProfile;
     Ingredient: Models.public_Ingredient;
+    PantryItem: Models.public_PantryItem;
     PasswordResetToken: Models.public_PasswordResetToken;
     Recipe: Models.public_Recipe;
     RecipeIngredient: Models.public_RecipeIngredient;
@@ -1743,6 +1865,108 @@ type ContractBase = Omit<
                 },
               ];
               foreignKeys: readonly [];
+            };
+            readonly pantry_item: {
+              columns: {
+                readonly created_at: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-date@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                  readonly many: false;
+                };
+                readonly custom_name: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly id: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly ingredient_id: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly quantity: {
+                  readonly dataType: 'pg/numeric';
+                  readonly codecId: 'pg/numeric@1';
+                  readonly nullable: true;
+                  readonly typeParams: { readonly precision: 10; readonly scale: 2 };
+                  readonly many: false;
+                };
+                readonly unit: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly updated_at: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-date@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly user_id: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [];
+              indexes: readonly [
+                {
+                  readonly name: 'pantry_item_ingredient_id_idx_30032a11';
+                  readonly prefix: 'pantry_item_ingredient_id_idx';
+                  readonly columns: readonly ['ingredient_id'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'pantry_item_user_id_idx_6c952402';
+                  readonly prefix: 'pantry_item_user_id_idx';
+                  readonly columns: readonly ['user_id'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'pantry_item_user_id_ingredient_id_idx_e46585f1';
+                  readonly prefix: 'pantry_item_user_id_ingredient_id_idx';
+                  readonly columns: readonly ['user_id', 'ingredient_id'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'pantry_item';
+                    readonly columns: readonly ['user_id'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'users';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'pantry_item';
+                    readonly columns: readonly ['ingredient_id'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'ingredients';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
             };
             readonly password_reset: {
               columns: {
@@ -2426,6 +2650,10 @@ type ContractBase = Omit<
       readonly namespace: 'public' & NamespaceId;
       readonly model: 'Ingredient';
     };
+    readonly pantry_item: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'PantryItem';
+    };
     readonly password_reset: {
       readonly namespace: 'public' & NamespaceId;
       readonly model: 'PasswordResetToken';
@@ -2887,6 +3115,17 @@ type ContractBase = Omit<
               };
             };
             readonly relations: {
+              readonly pantry_item: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'PantryItem';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['ingredientId'];
+                };
+              };
               readonly recipeIngredients: {
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
@@ -2923,6 +3162,89 @@ type ContractBase = Omit<
                 readonly sodiumMg: { readonly column: 'sodium_mg' };
                 readonly source: { readonly column: 'source' };
                 readonly sugarsG: { readonly column: 'sugars_g' };
+              };
+            };
+          };
+          readonly PantryItem: {
+            readonly fields: {
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-date@1';
+                };
+              };
+              readonly customName: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly ingredientId: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly quantity: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/numeric@1';
+                  readonly typeParams: { readonly precision: 10; readonly scale: 2 };
+                };
+              };
+              readonly unit: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly updatedAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-date@1';
+                };
+              };
+              readonly userId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+            };
+            readonly relations: {
+              readonly ingredient: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Ingredient';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: true;
+                readonly on: {
+                  readonly localFields: readonly ['ingredientId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly user: {
+                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['userId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'pantry_item';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly createdAt: { readonly column: 'created_at' };
+                readonly customName: { readonly column: 'custom_name' };
+                readonly id: { readonly column: 'id' };
+                readonly ingredientId: { readonly column: 'ingredient_id' };
+                readonly quantity: { readonly column: 'quantity' };
+                readonly unit: { readonly column: 'unit' };
+                readonly updatedAt: { readonly column: 'updated_at' };
+                readonly userId: { readonly column: 'user_id' };
               };
             };
           };
@@ -3546,6 +3868,17 @@ type ContractBase = Omit<
                   readonly targetFields: readonly ['userId'];
                 };
               };
+              readonly pantry_item: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'PantryItem';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['userId'];
+                };
+              };
               readonly password_reset: {
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
@@ -3753,6 +4086,23 @@ type ContractBase = Omit<
           readonly ref: {
             readonly entry: 'ingredients';
             readonly field: 'id';
+            readonly namespace: 'public';
+          };
+        },
+        {
+          readonly onCreate: { readonly id: 'cuid2'; readonly kind: 'generator' };
+          readonly ref: {
+            readonly entry: 'pantry_item';
+            readonly field: 'id';
+            readonly namespace: 'public';
+          };
+        },
+        {
+          readonly onCreate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly onUpdate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly ref: {
+            readonly entry: 'pantry_item';
+            readonly field: 'updated_at';
             readonly namespace: 'public';
           };
         },

@@ -91,6 +91,7 @@ model User {
   refreshTokens      RefreshToken[]
   email_verification EmailVerificationToken[]
   password_reset     PasswordResetToken[]
+  pantry_item        PantryItem[]
 
   @@map("users")
 }
@@ -191,12 +192,34 @@ model Ingredient {
 
   recipeIngredients RecipeIngredient[]
 
+  pantry_item        PantryItem[]
+
   createdAt TimestamptzJsDate @default(now()) @map("created_at")
 
   @@index([name])
   // Busca de ingredientes no autocomplete (full-text em português).
   @@fullTextIndex([name], name: "ingredient_name_search", language: "portuguese")
   @@map("ingredients")
+}
+
+// -----------------------------------------------------------------------------
+// DESPENSA
+// -----------------------------------------------------------------------------
+
+model PantryItem {
+  id           String @id @default(cuid(2))
+  userId       String @map("user_id")
+  user         User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ingredientId String?     @map("ingredient_id")
+  ingredient   Ingredient? @relation(fields: [ingredientId], references: [id], onDelete: SetNull)
+  customName   String?
+  quantity     Numeric(10, 2)?
+  unit         MeasureUnit?
+  createdAt    TimestamptzJsDate @default(now()) @map("created_at")
+  updatedAt    temporal.updatedAtJsDate() @map("updated_at")
+
+  @@index([userId, ingredientId])
+  @@map("pantry_item")
 }
 
 // -----------------------------------------------------------------------------
