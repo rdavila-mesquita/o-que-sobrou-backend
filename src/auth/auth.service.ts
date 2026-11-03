@@ -10,12 +10,13 @@ import { EmailVerificationService } from "../email-verification/email-verificati
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name)
   constructor(
     @Inject(PrismaService) private readonly prismaService: PrismaService,
     @Inject(JwtService) private readonly jwtService: JwtService,
     @Inject(RefreshTokenService) private readonly refreshTokenService: RefreshTokenService,
     @Inject(EmailVerificationService) private readonly emailVerification: EmailVerificationService,
-    private readonly logger = new Logger(AuthService.name)
+
   ) {}
 
   async signup(data: SignUpDTO) {
