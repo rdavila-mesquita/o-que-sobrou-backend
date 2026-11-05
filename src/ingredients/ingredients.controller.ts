@@ -19,7 +19,7 @@ export class IngredientsController {
     );
   }
 
-  @Get('')
+  @Get(':id')
   async findIngredientById(@Param('id') id:string) {
     return this.ingredientsService.findIngredientById(id);
   }

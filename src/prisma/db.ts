@@ -15,7 +15,7 @@ function loadComposerDatabase() {
   }
 }
 
-const contract = contractFromJson<Contract>(contractJson);
+export const contract = contractFromJson<Contract>(contractJson);
 
 export const db =
   loadComposerDatabase() ??
