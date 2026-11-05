@@ -18,10 +18,16 @@ function loadComposerDatabase() {
 export const contract = contractFromJson<Contract>(contractJson);
 
 export const db =
-  loadComposerDatabase() ??
-  (process.env.DATABASE_URL
-    ? postgres<Contract>({ contract, url: process.env.DATABASE_URL })
-    : postgres<Contract>({ contract }));
+  process.env.NODE_ENV === "test"
+    ? postgres<Contract>({
+        contract,
+        url: process.env.DATABASE_URL!,
+      })
+    : loadComposerDatabase() ??
+      postgres<Contract>({
+        contract,
+        url: process.env.DATABASE_URL,
+      });
 
 export type Tx = Parameters<Parameters<typeof db.transaction>[0]>[0];
 
