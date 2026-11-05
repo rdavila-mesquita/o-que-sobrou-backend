@@ -13,6 +13,10 @@ export class PrismaService implements OnModuleInit, OnModuleDestroy {
     return this.db.sql;
   }
 
+  get enums() {
+    return this.db.enums;
+  }
+
   get transaction() {
     return this.db.transaction.bind(this.db);
   }

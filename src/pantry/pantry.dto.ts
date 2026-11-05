@@ -1,36 +1,41 @@
-import { IsEnum, IsNumber, IsOptional, IsString, Min, ValidateIf } from "class-validator";
+import { IsIn, IsNotEmpty, IsNumberString, IsOptional, IsString, Matches, Validate } from "class-validator";
+import { MEASURE_UNITS } from "../common/constants/database-enums";
+import { MinDecimalValidator } from "../validator/min-decimal.validator";
 
-enum MeasureUnit {
-  G,
-  KG,
-  ML,
-  L,
-  XICARA,
-  COLHER_SOPA,
-  COLHER_CHA,
-  UNIDADE,
-  FATIA,
-  DENTE,
-  PITADA,
-  A_GOSTO
-}
-
-export class CreatePantryIntem {
+export class CreatePantryItemDTO {
   @IsString()
   @IsOptional()
   ingredientId?: string;
 
   @IsString()
+  @IsNotEmpty()
+  @Matches(/\S/, { message: 'customName cannot contain only whitespace.' })
   @IsOptional()
-  @ValidateIf(value => value.ingredientId != value.customName)
   customName?: string;
 
-  @IsNumber()
-  @Min(0.01)
+  @IsNumberString()
+  @Validate(MinDecimalValidator)
   @IsOptional()
-  quantity?: number;
+  quantity?: string;
 
-  @IsEnum(MeasureUnit)
+  @IsIn(MEASURE_UNITS)
   @IsOptional()
-  unit?: MeasureUnit;
+  unit?: (typeof MEASURE_UNITS)[number];
+}
+
+export class UpdatePantryItemDTO {
+  @IsString()
+  @IsNotEmpty()
+  @Matches(/\S/, { message: 'customName cannot contain only whitespace.' })
+  @IsOptional()
+  customName?: string;
+  
+  @IsNumberString()
+  @Validate(MinDecimalValidator)
+  @IsOptional()
+  quantity?: string;
+
+  @IsIn(MEASURE_UNITS)
+  @IsOptional()
+  unit?: (typeof MEASURE_UNITS)[number];
 }
