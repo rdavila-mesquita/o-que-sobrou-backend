@@ -6,9 +6,10 @@ import { EmailVerificationModule } from "./email-verification/email-verification
 import { PasswordRecoveryModule } from './password-recovery/password-recovery.module.js';
 import { PantryModule } from './pantry/pantry.module.js';
 import { IngredientsModule } from './ingredients/ingredients.module.js';
+import { RecipesModule } from './recipes/recipes.module.js';
 
 @Module({
-  imports: [AuthModule, PrismaModule, EmailVerificationModule, EmailModule, PasswordRecoveryModule, PantryModule, IngredientsModule],
+  imports: [AuthModule, PrismaModule, EmailVerificationModule, EmailModule, PasswordRecoveryModule, PantryModule, IngredientsModule, RecipesModule],
   controllers: [],
   providers: []
 })
