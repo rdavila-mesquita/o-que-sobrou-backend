@@ -7,9 +7,10 @@ import { PasswordRecoveryModule } from './password-recovery/password-recovery.mo
 import { PantryModule } from './pantry/pantry.module.js';
 import { IngredientsModule } from './ingredients/ingredients.module.js';
 import { RecipesModule } from './recipes/recipes.module.js';
+import { HealthProfileModule } from './health-profile/health-profile.module.js';
 
 @Module({
-  imports: [AuthModule, PrismaModule, EmailVerificationModule, EmailModule, PasswordRecoveryModule, PantryModule, IngredientsModule, RecipesModule],
+  imports: [AuthModule, PrismaModule, EmailVerificationModule, EmailModule, PasswordRecoveryModule, PantryModule, IngredientsModule, RecipesModule, HealthProfileModule],
   controllers: [],
   providers: []
 })

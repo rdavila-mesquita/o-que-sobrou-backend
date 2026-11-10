@@ -18,5 +18,9 @@
       "node", "jest"
     ]
   },
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*.ts"],
+  "ts-node": {
+    "esm": true,
+    "experimentalSpecifierResolution": "node"
+  }
 }
