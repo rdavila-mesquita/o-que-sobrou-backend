@@ -16,7 +16,7 @@
     "db:update": "prisma db update",
     "db:verify": "prisma db verify",
     "deploy": "pnpm run build && pnpm run composer:deploy",
-    "dev": "tsx watch --env-file=.env src/main.ts",
+    "dev": "node --watch --experimental-specifier-resolution=node --loader ts-node/esm --env-file=.env src/main.ts",
     "dev:composer": "pnpm run build && pnpm run composer:dev",
     "migrate": "prisma db migrate",
     "migration:plan": "prisma migration plan",
@@ -62,6 +62,7 @@
     "prisma": "8.0.0-rc.28",
     "supertest": "^7.3.1",
     "ts-jest": "^29.4.15",
+    "ts-node": "^10.9.2",
     "tsdown": "^0.23.0",
     "tsx": "^4.23.15",
     "typescript": "^6.0.3"
