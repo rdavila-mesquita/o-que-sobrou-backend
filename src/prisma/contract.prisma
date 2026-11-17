@@ -76,13 +76,13 @@ enum GenerationStatus {
 // -----------------------------------------------------------------------------
 
 model User {
-  id              String            @id @default(cuid(2))
+  id              String            @id @onCreate(cuid(2))
   name            String
   email           String            @unique
   passwordHash    String            @map("password_hash")
   createdAt       TimestamptzJsDate @default(now()) @map("created_at")
   emailVerifiedAt TimestamptzJsDate? @map("email_verified_at")
-  updatedAt       temporal.updatedAtJsDate() @map("updated_at")
+  updatedAt       TimestamptzJsDate @default(now()) @map("updated_at")
 
   healthProfile      HealthProfile?
   recipes            Recipe[]
@@ -97,7 +97,7 @@ model User {
 }
 
 model HealthProfile {
-  id     String @id @default(cuid(2))
+  id     String @id @onCreate(cuid(2))
   userId String @unique @map("user_id")
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -113,13 +113,13 @@ model HealthProfile {
   disclaimerAcceptedAt TimestamptzJsDate? @map("disclaimer_accepted_at")
 
   createdAt TimestamptzJsDate @default(now()) @map("created_at")
-  updatedAt temporal.updatedAtJsDate() @map("updated_at")
+  updatedAt TimestamptzJsDate @default(now()) @map("updated_at")
 
   @@map("health_profiles")
 }
 
 model EmailVerificationToken {
-  id        String             @id @default(cuid(2))
+  id        String             @id @onCreate(cuid(2))
   userId    String             @map("user_id")
   user      User               @relation(fields: [userId], references: [id], onDelete: Cascade)
   tokenHash String             @unique @map("token_hash")
@@ -132,7 +132,7 @@ model EmailVerificationToken {
 }
 
 model PasswordResetToken {
-  id        String             @id @default(cuid(2))
+  id        String             @id @onCreate(cuid(2))
   userId    String             @map("user_id")
   user      User               @relation(fields: [userId], references: [id], onDelete: Cascade)
   tokenHash String             @unique @map("token_hash")
@@ -146,7 +146,7 @@ model PasswordResetToken {
 }
 
 model RefreshToken {
-  id        String             @id @default(cuid(2))
+  id        String             @id @onCreate(cuid(2))
   userId    String             @map("user_id")
   user      User               @relation(fields: [userId], references: [id], onDelete: Cascade)
   tokenHash String             @unique @map("token_hash")
@@ -165,7 +165,7 @@ model RefreshToken {
 // -----------------------------------------------------------------------------
 
 model Ingredient {
-  id           String           @id @default(cuid(2))
+  id           String           @id @onCreate(cuid(2))
   name         String
   slug         String           @unique
   aliases      String[]
@@ -207,16 +207,16 @@ model Ingredient {
 // -----------------------------------------------------------------------------
 
 model PantryItem {
-  id           String @id @default(cuid(2))
+  id           String @id @onCreate(cuid(2))
   userId       String @map("user_id")
   user         User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   ingredientId String?     @map("ingredient_id")
   ingredient   Ingredient? @relation(fields: [ingredientId], references: [id], onDelete: SetNull)
-  customName   String?
+  customName   String?     @map("custom_name")
   quantity     Numeric(10, 2)?
   unit         MeasureUnit?
   createdAt    TimestamptzJsDate @default(now()) @map("created_at")
-  updatedAt    temporal.updatedAtJsDate() @map("updated_at")
+  updatedAt    TimestamptzJsDate @default(now()) @map("updated_at")
 
   @@index([userId, ingredientId])
   @@map("pantry_item")
@@ -227,7 +227,7 @@ model PantryItem {
 // -----------------------------------------------------------------------------
 
 model Recipe {
-  id     String @id @default(cuid(2))
+  id     String @id @onCreate(cuid(2))
   userId String @map("user_id")
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -248,14 +248,14 @@ model Recipe {
   favorites   Favorite[]
 
   createdAt TimestamptzJsDate @default(now()) @map("created_at")
-  updatedAt temporal.updatedAtJsDate() @map("updated_at")
+  updatedAt TimestamptzJsDate @default(now()) @map("updated_at")
 
   @@index([userId, createdAt])
   @@map("recipes")
 }
 
 model RecipeIngredient {
-  id       String @id @default(cuid(2))
+  id       String @id @onCreate(cuid(2))
   recipeId String @map("recipe_id")
   recipe   Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
 
@@ -278,7 +278,7 @@ model RecipeIngredient {
 }
 
 model RecipeStep {
-  id              String @id @default(cuid(2))
+  id              String @id @onCreate(cuid(2))
   recipeId        String @map("recipe_id")
   recipe          Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
   position        Int
@@ -291,7 +291,7 @@ model RecipeStep {
 
 /// Nutrição POR PORÇÃO, calculada pelo backend (não pela IA).
 model RecipeNutrition {
-  id       String @id @default(cuid(2))
+  id       String @id @onCreate(cuid(2))
   recipeId String @unique @map("recipe_id")
   recipe   Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
 
@@ -329,22 +329,24 @@ model Favorite {
 // -----------------------------------------------------------------------------
 
 model GenerationRequest {
-  id     String @id @default(cuid(2))
+  id     String @id @onCreate(cuid(2))
   userId String @map("user_id")
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  inputIngredients String[] @map("input_ingredients")
+  inputIngredients  String[] @map("input_ingredients")
   /// Cópia do perfil de saúde no momento da geração (o perfil pode mudar depois).
-  healthSnapshot   Json?    @map("health_snapshot")
+  healthSnapshot    Json?    @map("health_snapshot")
+  /// Preferências do usuário (ex.: receita fit, deve render 1 porção, tempo de preparo máximo 30 minutos...)
+  generationOptions Json?    @map("generation_options")
 
-  status           GenerationStatus @default(PENDING)
-  attempts         Int              @default(0)
-  model            String?
-  promptTokens     Int?             @map("prompt_tokens")
-  completionTokens Int?             @map("completion_tokens")
+  status            GenerationStatus @default(PENDING)
+  attempts          Int              @default(0)
+  model             String?
+  promptTokens      Int?             @map("prompt_tokens")
+  completionTokens  Int?             @map("completion_tokens")
   /// Resultado do validador de segurança (violações encontradas por tentativa).
-  validationReport Json?            @map("validation_report")
-  errorMessage     String?          @map("error_message")
+  validationReport  Json?            @map("validation_report")
+  errorMessage      String?          @map("error_message")
 
   createdAt  TimestamptzJsDate  @default(now()) @map("created_at")
   finishedAt TimestamptzJsDate? @map("finished_at")

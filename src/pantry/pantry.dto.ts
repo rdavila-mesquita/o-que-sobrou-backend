@@ -1,6 +1,6 @@
-import { IsIn, IsNotEmpty, IsNumberString, IsOptional, IsString, Matches, Validate } from "class-validator";
+import { ArrayNotEmpty, ArrayUnique, IsArray, IsIn, IsNotEmpty, IsNumberString, IsOptional, IsString, Matches, Validate } from "class-validator";
 import { MEASURE_UNITS } from "../common/constants/database-enums";
-import { MinDecimalValidator } from "../validator/min-decimal.validator";
+import { MinDecimalValidator } from "../common/validator/min-decimal.validator";
 
 export class CreatePantryItemDTO {
   @IsString()
@@ -29,7 +29,7 @@ export class UpdatePantryItemDTO {
   @Matches(/\S/, { message: 'customName cannot contain only whitespace.' })
   @IsOptional()
   customName?: string;
-  
+
   @IsNumberString()
   @Validate(MinDecimalValidator)
   @IsOptional()
@@ -38,4 +38,12 @@ export class UpdatePantryItemDTO {
   @IsIn(MEASURE_UNITS)
   @IsOptional()
   unit?: (typeof MEASURE_UNITS)[number];
+}
+
+export class FindPantryItemsDTO {
+  @IsArray()
+  @ArrayNotEmpty()
+  @ArrayUnique()
+  @IsString({ each: true })
+  pantryItemIds!: string[];
 }
