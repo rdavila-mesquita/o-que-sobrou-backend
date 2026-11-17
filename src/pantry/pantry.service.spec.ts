@@ -242,7 +242,8 @@ describe('PantryService', () => {
       expect(pantryItemQuery.update).toHaveBeenCalledWith({
         customName: undefined,
         quantity: '3.00',
-        unit: 'KG'
+        unit: 'KG',
+        updatedAt: expect.any(Date)
       });
 
       expect(result).toEqual({
