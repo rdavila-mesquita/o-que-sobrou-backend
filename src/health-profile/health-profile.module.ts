@@ -5,5 +5,6 @@ import { HealthProfileController } from './health-profile.controller.js';
 @Module({
   controllers: [HealthProfileController],
   providers: [HealthProfileService],
+  exports: [HealthProfileService]
 })
 export class HealthProfileModule {}

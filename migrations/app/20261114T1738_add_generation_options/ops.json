@@ -1,0 +1,765 @@
+[
+  {
+    "id": "dropConstraint.pantry_item.pantry_item_ingredient_id_fkey",
+    "label": "Drop constraint \"pantry_item_ingredient_id_fkey\" on \"pantry_item\"",
+    "operationClass": "widening",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "pantry_item_ingredient_id_fkey",
+        "table": "pantry_item"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"pantry_item_ingredient_id_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "pantry_item_ingredient_id_fkey",
+          "public",
+          "\"public\".\"pantry_item\""
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "constraint \"pantry_item_ingredient_id_fkey\" on \"pantry_item\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop constraint \"pantry_item_ingredient_id_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"pantry_item\" DROP CONSTRAINT \"pantry_item_ingredient_id_fkey\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"pantry_item_ingredient_id_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "pantry_item_ingredient_id_fkey",
+          "public",
+          "\"public\".\"pantry_item\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "constraint \"pantry_item_ingredient_id_fkey\" on \"pantry_item\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "dropCheckConstraint.health_profiles.health_profiles_allergens_check_541456a1",
+    "label": "Drop check constraint \"health_profiles_allergens_check_541456a1\" on \"health_profiles\"",
+    "operationClass": "widening",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "health_profiles_allergens_check_541456a1",
+        "table": "health_profiles"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"health_profiles_allergens_check_541456a1\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "health_profiles_allergens_check_541456a1",
+          "public",
+          "\"public\".\"health_profiles\""
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "constraint \"health_profiles_allergens_check_541456a1\" on \"health_profiles\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop check constraint \"health_profiles_allergens_check_541456a1\"",
+        "sql": "ALTER TABLE \"public\".\"health_profiles\" DROP CONSTRAINT \"health_profiles_allergens_check_541456a1\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"health_profiles_allergens_check_541456a1\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "health_profiles_allergens_check_541456a1",
+          "public",
+          "\"public\".\"health_profiles\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "constraint \"health_profiles_allergens_check_541456a1\" on \"health_profiles\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "dropCheckConstraint.health_profiles.health_profiles_conditions_check_c1aeaad3",
+    "label": "Drop check constraint \"health_profiles_conditions_check_c1aeaad3\" on \"health_profiles\"",
+    "operationClass": "widening",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "health_profiles_conditions_check_c1aeaad3",
+        "table": "health_profiles"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"health_profiles_conditions_check_c1aeaad3\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "health_profiles_conditions_check_c1aeaad3",
+          "public",
+          "\"public\".\"health_profiles\""
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "constraint \"health_profiles_conditions_check_c1aeaad3\" on \"health_profiles\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop check constraint \"health_profiles_conditions_check_c1aeaad3\"",
+        "sql": "ALTER TABLE \"public\".\"health_profiles\" DROP CONSTRAINT \"health_profiles_conditions_check_c1aeaad3\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"health_profiles_conditions_check_c1aeaad3\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "health_profiles_conditions_check_c1aeaad3",
+          "public",
+          "\"public\".\"health_profiles\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "constraint \"health_profiles_conditions_check_c1aeaad3\" on \"health_profiles\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "dropCheckConstraint.health_profiles.health_profiles_dietary_preferences_check_44038eb5",
+    "label": "Drop check constraint \"health_profiles_dietary_preferences_check_44038eb5\" on \"health_profiles\"",
+    "operationClass": "widening",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "health_profiles_dietary_preferences_check_44038eb5",
+        "table": "health_profiles"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"health_profiles_dietary_preferences_check_44038eb5\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "health_profiles_dietary_preferences_check_44038eb5",
+          "public",
+          "\"public\".\"health_profiles\""
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "constraint \"health_profiles_dietary_preferences_check_44038eb5\" on \"health_profiles\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop check constraint \"health_profiles_dietary_preferences_check_44038eb5\"",
+        "sql": "ALTER TABLE \"public\".\"health_profiles\" DROP CONSTRAINT \"health_profiles_dietary_preferences_check_44038eb5\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"health_profiles_dietary_preferences_check_44038eb5\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "health_profiles_dietary_preferences_check_44038eb5",
+          "public",
+          "\"public\".\"health_profiles\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "constraint \"health_profiles_dietary_preferences_check_44038eb5\" on \"health_profiles\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "dropCheckConstraint.ingredients.ingredients_allergens_check_541456a1",
+    "label": "Drop check constraint \"ingredients_allergens_check_541456a1\" on \"ingredients\"",
+    "operationClass": "widening",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "ingredients_allergens_check_541456a1",
+        "table": "ingredients"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"ingredients_allergens_check_541456a1\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ingredients_allergens_check_541456a1",
+          "public",
+          "\"public\".\"ingredients\""
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "constraint \"ingredients_allergens_check_541456a1\" on \"ingredients\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop check constraint \"ingredients_allergens_check_541456a1\"",
+        "sql": "ALTER TABLE \"public\".\"ingredients\" DROP CONSTRAINT \"ingredients_allergens_check_541456a1\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"ingredients_allergens_check_541456a1\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ingredients_allergens_check_541456a1",
+          "public",
+          "\"public\".\"ingredients\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "constraint \"ingredients_allergens_check_541456a1\" on \"ingredients\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "column.public.generation_requests.generation_options",
+    "label": "Add column \"generation_options\" to \"generation_requests\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "generation_options",
+        "table": "generation_requests"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"generation_options\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "generation_requests",
+          "generation_options"
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "column \"generation_options\" on \"generation_requests\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"generation_options\"",
+        "sql": "ALTER TABLE \"public\".\"generation_requests\" ADD COLUMN \"generation_options\" json"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"generation_options\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "generation_requests",
+          "generation_options"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "column \"generation_options\" on \"generation_requests\""
+        }
+      },
+      {
+        "description": "verify column \"generation_options\" has type \"json\"",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_attribute\" AS \"a\" INNER JOIN \"pg_class\" AS \"c\" ON \"c\".\"oid\" = \"a\".\"attrelid\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"relnamespace\" WHERE (\"n\".\"nspname\" = $1 AND \"c\".\"relname\" = $2 AND \"a\".\"attname\" = $3 AND (format_type(\"a\".\"atttypid\", \"a\".\"atttypmod\")) = $4 AND NOT (\"a\".\"attisdropped\"))) AS \"result\"",
+        "params": [
+          "public",
+          "generation_requests",
+          "generation_options",
+          "json"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "setDefault.health_profiles.updated_at",
+    "label": "Set default on \"health_profiles\".\"updated_at\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "updated_at",
+        "table": "health_profiles"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"updated_at\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "health_profiles",
+          "updated_at"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "column \"updated_at\" on \"health_profiles\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "set default on \"updated_at\"",
+        "sql": "ALTER TABLE \"public\".\"health_profiles\" ALTER COLUMN \"updated_at\" SET DEFAULT (now())"
+      }
+    ],
+    "postcheck": []
+  },
+  {
+    "id": "setDefault.pantry_item.updated_at",
+    "label": "Set default on \"pantry_item\".\"updated_at\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "updated_at",
+        "table": "pantry_item"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"updated_at\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "pantry_item",
+          "updated_at"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "column \"updated_at\" on \"pantry_item\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "set default on \"updated_at\"",
+        "sql": "ALTER TABLE \"public\".\"pantry_item\" ALTER COLUMN \"updated_at\" SET DEFAULT (now())"
+      }
+    ],
+    "postcheck": []
+  },
+  {
+    "id": "setDefault.recipes.updated_at",
+    "label": "Set default on \"recipes\".\"updated_at\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "updated_at",
+        "table": "recipes"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"updated_at\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "recipes",
+          "updated_at"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "column \"updated_at\" on \"recipes\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "set default on \"updated_at\"",
+        "sql": "ALTER TABLE \"public\".\"recipes\" ALTER COLUMN \"updated_at\" SET DEFAULT (now())"
+      }
+    ],
+    "postcheck": []
+  },
+  {
+    "id": "setDefault.users.updated_at",
+    "label": "Set default on \"users\".\"updated_at\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "updated_at",
+        "table": "users"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"updated_at\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "users",
+          "updated_at"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "column \"updated_at\" on \"users\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "set default on \"updated_at\"",
+        "sql": "ALTER TABLE \"public\".\"users\" ALTER COLUMN \"updated_at\" SET DEFAULT (now())"
+      }
+    ],
+    "postcheck": []
+  },
+  {
+    "id": "checkConstraint.health_profiles.health_profiles_allergens_check_b46428e6",
+    "label": "Add check constraint \"health_profiles_allergens_check_b46428e6\" on \"health_profiles\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "health_profiles_allergens_check_b46428e6",
+        "table": "health_profiles"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"health_profiles_allergens_check_b46428e6\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "health_profiles_allergens_check_b46428e6",
+          "public",
+          "\"public\".\"health_profiles\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "constraint \"health_profiles_allergens_check_b46428e6\" on \"health_profiles\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add check constraint \"health_profiles_allergens_check_b46428e6\"",
+        "sql": "ALTER TABLE \"public\".\"health_profiles\" ADD CONSTRAINT \"health_profiles_allergens_check_b46428e6\" CHECK (array_remove(\"allergens\", NULL) <@ '{\"GLUTEN\",\"LACTOSE\",\"LEITE\",\"OVO\",\"AMENDOIM\",\"CASTANHAS\",\"SOJA\",\"PEIXE\",\"CRUSTACEOS\",\"GERGELIM\"}')"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify check constraint \"health_profiles_allergens_check_b46428e6\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4)) AS \"result\"",
+        "params": [
+          "health_profiles_allergens_check_b46428e6",
+          "public",
+          "\"public\".\"health_profiles\"",
+          "c"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "checkConstraint.health_profiles.health_profiles_conditions_check_00d961c2",
+    "label": "Add check constraint \"health_profiles_conditions_check_00d961c2\" on \"health_profiles\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "health_profiles_conditions_check_00d961c2",
+        "table": "health_profiles"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"health_profiles_conditions_check_00d961c2\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "health_profiles_conditions_check_00d961c2",
+          "public",
+          "\"public\".\"health_profiles\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "constraint \"health_profiles_conditions_check_00d961c2\" on \"health_profiles\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add check constraint \"health_profiles_conditions_check_00d961c2\"",
+        "sql": "ALTER TABLE \"public\".\"health_profiles\" ADD CONSTRAINT \"health_profiles_conditions_check_00d961c2\" CHECK (array_remove(\"conditions\", NULL) <@ '{\"DIABETES_TIPO_1\",\"DIABETES_TIPO_2\",\"PRE_DIABETES\",\"HIPERTENSAO\",\"COLESTEROL_ALTO\",\"DOENCA_RENAL\",\"DOENCA_CELIACA\",\"INTOLERANCIA_LACTOSE\",\"GOTA\",\"GASTRITE_REFLUXO\"}')"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify check constraint \"health_profiles_conditions_check_00d961c2\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4)) AS \"result\"",
+        "params": [
+          "health_profiles_conditions_check_00d961c2",
+          "public",
+          "\"public\".\"health_profiles\"",
+          "c"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "checkConstraint.health_profiles.health_profiles_dietary_preferences_check_2577d58d",
+    "label": "Add check constraint \"health_profiles_dietary_preferences_check_2577d58d\" on \"health_profiles\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "health_profiles_dietary_preferences_check_2577d58d",
+        "table": "health_profiles"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"health_profiles_dietary_preferences_check_2577d58d\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "health_profiles_dietary_preferences_check_2577d58d",
+          "public",
+          "\"public\".\"health_profiles\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "constraint \"health_profiles_dietary_preferences_check_2577d58d\" on \"health_profiles\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add check constraint \"health_profiles_dietary_preferences_check_2577d58d\"",
+        "sql": "ALTER TABLE \"public\".\"health_profiles\" ADD CONSTRAINT \"health_profiles_dietary_preferences_check_2577d58d\" CHECK (array_remove(\"dietary_preferences\", NULL) <@ '{\"VEGETARIANO\",\"VEGANO\",\"SEM_CARNE_VERMELHA\",\"SEM_PORCO\",\"LOW_CARB\",\"ALTA_PROTEINA\"}')"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify check constraint \"health_profiles_dietary_preferences_check_2577d58d\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4)) AS \"result\"",
+        "params": [
+          "health_profiles_dietary_preferences_check_2577d58d",
+          "public",
+          "\"public\".\"health_profiles\"",
+          "c"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "checkConstraint.ingredients.ingredients_allergens_check_b46428e6",
+    "label": "Add check constraint \"ingredients_allergens_check_b46428e6\" on \"ingredients\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "ingredients_allergens_check_b46428e6",
+        "table": "ingredients"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"ingredients_allergens_check_b46428e6\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ingredients_allergens_check_b46428e6",
+          "public",
+          "\"public\".\"ingredients\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "constraint \"ingredients_allergens_check_b46428e6\" on \"ingredients\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add check constraint \"ingredients_allergens_check_b46428e6\"",
+        "sql": "ALTER TABLE \"public\".\"ingredients\" ADD CONSTRAINT \"ingredients_allergens_check_b46428e6\" CHECK (array_remove(\"allergens\", NULL) <@ '{\"GLUTEN\",\"LACTOSE\",\"LEITE\",\"OVO\",\"AMENDOIM\",\"CASTANHAS\",\"SOJA\",\"PEIXE\",\"CRUSTACEOS\",\"GERGELIM\"}')"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify check constraint \"ingredients_allergens_check_b46428e6\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4)) AS \"result\"",
+        "params": [
+          "ingredients_allergens_check_b46428e6",
+          "public",
+          "\"public\".\"ingredients\"",
+          "c"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.pantry_item.pantry_item_ingredient_id_fkey",
+    "label": "Add foreign key \"pantry_item_ingredient_id_fkey\" on \"pantry_item\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "pantry_item_ingredient_id_fkey",
+        "table": "pantry_item"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"pantry_item_ingredient_id_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "pantry_item_ingredient_id_fkey",
+          "public",
+          "\"public\".\"pantry_item\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "FK \"pantry_item_ingredient_id_fkey\" on \"pantry_item\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"pantry_item_ingredient_id_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"pantry_item\"\nADD CONSTRAINT \"pantry_item_ingredient_id_fkey\"\nFOREIGN KEY (\"ingredient_id\")\nREFERENCES \"public\".\"ingredients\" (\"id\")\nON DELETE SET NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"pantry_item_ingredient_id_fkey\" exists with the planned columns, referenced table and actions",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb AND \"c\".\"confrelid\" = to_regclass($6) AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"confkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"confrelid\" AND key_attribute.attnum = key_column.attnum) = ($7)::jsonb AND \"c\".\"confdeltype\" = $8 AND \"c\".\"confupdtype\" = $9)) AS \"result\"",
+        "params": [
+          "pantry_item_ingredient_id_fkey",
+          "public",
+          "\"public\".\"pantry_item\"",
+          "f",
+          "[\"ingredient_id\"]",
+          "\"public\".\"ingredients\"",
+          "[\"id\"]",
+          "n",
+          "a"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.public.ingredients.ingredient_name_search_f619d6de.rename",
+    "label": "Rename index \"ingredient_name_search_f619d6de\" to \"ingredient_name_search_ce67deb5\" on \"ingredients\"",
+    "operationClass": "widening",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "ingredient_name_search_ce67deb5",
+        "table": "ingredients"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"ingredient_name_search_f619d6de\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ingredient_name_search_f619d6de\""
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "index \"ingredient_name_search_f619d6de\""
+        }
+      },
+      {
+        "description": "ensure index \"ingredient_name_search_ce67deb5\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ingredient_name_search_ce67deb5\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"ingredient_name_search_ce67deb5\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "rename index \"ingredient_name_search_f619d6de\" to \"ingredient_name_search_ce67deb5\"",
+        "sql": "ALTER INDEX \"public\".\"ingredient_name_search_f619d6de\" RENAME TO \"ingredient_name_search_ce67deb5\"",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"ingredient_name_search_ce67deb5\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ingredient_name_search_ce67deb5\""
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "index \"ingredient_name_search_ce67deb5\""
+        }
+      },
+      {
+        "description": "verify index \"ingredient_name_search_f619d6de\" no longer exists",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ingredient_name_search_f619d6de\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"ingredient_name_search_f619d6de\""
+        }
+      }
+    ]
+  }
+]

@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Inject, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { PantryService } from './pantry.service.js';
 import { AuthGuard } from '../common/guards/auth.guard.js';
-import type { CreatePantryItemDTO, UpdatePantryItemDTO } from './pantry.dto.js';
+import { CreatePantryItemDTO, FindPantryItemsDTO, UpdatePantryItemDTO } from './pantry.dto.js';
 import type { AuthenticatedRequest } from '../auth/types/authenticated-request.js';
 
 @UseGuards(AuthGuard)
@@ -33,6 +33,17 @@ export class PantryController {
     const userId = request.user!.id;
 
     return this.pantryService.createPantryItem(userId, body);
+  }
+
+  @Post('find-by-ids')
+  @HttpCode(HttpStatus.OK)
+  async findItemsByIds(@Req() request: AuthenticatedRequest,@Body() body: FindPantryItemsDTO) {
+    const userId = request.user!.id;
+
+    return this.pantryService.findItemsByIds(
+      body.pantryItemIds,
+      userId,
+    );
   }
 
   @Patch(':id')

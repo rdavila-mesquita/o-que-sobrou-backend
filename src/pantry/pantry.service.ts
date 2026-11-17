@@ -1,6 +1,6 @@
 import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
-import type { CreatePantryItemDTO, UpdatePantryItemDTO } from './pantry.dto';
+import { CreatePantryItemDTO, UpdatePantryItemDTO } from './pantry.dto';
 
 @Injectable()
 export class PantryService {
@@ -38,7 +38,7 @@ export class PantryService {
   async findAllItems(userId: string){
     if(!userId) throw new BadRequestException('User not informed.');
 
-    const items = await this.prismaService.db.orm.public.PantryItem.where({ userId }).all()
+    const items = await this.prismaService.db.orm.public.PantryItem.where({ userId }).all();
 
     return { items };
   }
@@ -53,6 +53,28 @@ export class PantryService {
     if(!item) throw new NotFoundException('Pantry item not found.');
 
     return { item };
+  }
+
+  async findItemsByIds(pantryItemIds: string[], userId: string){
+    if (!Array.isArray(pantryItemIds) || pantryItemIds.length === 0) {
+      throw new BadRequestException('At least one pantry item ID is required.');
+    }
+
+    if(!userId) throw new BadRequestException('User ID is required.');
+
+    const items = await this.prismaService.db.orm.public.PantryItem
+    .where({ userId })
+    .where(row => row.id.in(pantryItemIds))
+    .include('ingredient')
+    .all();
+
+    if (items.length !== pantryItemIds.length) {
+      throw new BadRequestException(
+        'One or more pantry items were not found or do not belong to this user.',
+      );
+    }
+
+    return { items };
   }
 
   async updatePantryItem(data: UpdatePantryItemDTO, itemId: string, userId: string){
@@ -73,7 +95,7 @@ export class PantryService {
 
     const updatedItem = await this.prismaService.db.orm.public.PantryItem
     .where({ id: itemId, userId })
-    .update({ customName: data.customName, quantity: data.quantity, unit: data.unit });
+    .update({ customName: data.customName, quantity: data.quantity, unit: data.unit, updatedAt: new Date() });
 
     return { updatedItem };
   }

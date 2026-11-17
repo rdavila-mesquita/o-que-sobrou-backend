@@ -8,5 +8,6 @@ import { AuthModule } from '../auth/auth.module.js';
   imports: [PrismaModule, AuthModule],
   controllers: [PantryController],
   providers: [PantryService],
+  exports: [PantryService],
 })
 export class PantryModule {}

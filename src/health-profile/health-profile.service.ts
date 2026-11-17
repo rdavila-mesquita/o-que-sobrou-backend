@@ -45,6 +45,7 @@ export class HealthProfileService {
         dailyCalorieTarget: data.dailyCalorieTarget,
         notes: data.notes ?? null,
         disclaimerAcceptedAt: disclaimerAcceptedAt,
+        updatedAt: new Date()
       }
     });
 

@@ -8,9 +8,10 @@ import { PantryModule } from './pantry/pantry.module.js';
 import { IngredientsModule } from './ingredients/ingredients.module.js';
 import { RecipesModule } from './recipes/recipes.module.js';
 import { HealthProfileModule } from './health-profile/health-profile.module.js';
+import { RecipeGenerationModule } from './recipe-generation/recipe-generation.module.js';
 
 @Module({
-  imports: [AuthModule, PrismaModule, EmailVerificationModule, EmailModule, PasswordRecoveryModule, PantryModule, IngredientsModule, RecipesModule, HealthProfileModule],
+  imports: [AuthModule, PrismaModule, EmailVerificationModule, EmailModule, PasswordRecoveryModule, PantryModule, IngredientsModule, RecipesModule, HealthProfileModule, RecipeGenerationModule],
   controllers: [],
   providers: []
 })

@@ -489,6 +489,13 @@
                   "kind": "scalar"
                 }
               },
+              "generationOptions": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/json@1",
+                  "kind": "scalar"
+                }
+              },
               "healthSnapshot": {
                 "nullable": true,
                 "type": {
@@ -605,6 +612,9 @@
                 },
                 "finishedAt": {
                   "column": "finished_at"
+                },
+                "generationOptions": {
+                  "column": "generation_options"
                 },
                 "healthSnapshot": {
                   "column": "health_snapshot"
@@ -2321,6 +2331,9 @@
               },
               "foreignKeys": [
                 {
+                  "index": {
+                    "name": "email_verification_user_id_idx_6c952402"
+                  },
                   "onDelete": "cascade",
                   "source": {
                     "columns": [
@@ -2385,6 +2398,9 @@
               },
               "foreignKeys": [
                 {
+                  "index": {
+                    "name": "favorites_user_id_idx_6c952402"
+                  },
                   "onDelete": "cascade",
                   "source": {
                     "columns": [
@@ -2402,6 +2418,9 @@
                   }
                 },
                 {
+                  "index": {
+                    "name": "favorites_recipe_id_idx_bc78e692"
+                  },
                   "onDelete": "cascade",
                   "source": {
                     "columns": [
@@ -2492,6 +2511,11 @@
                   "dataType": "pg/timestamptz",
                   "nullable": true
                 },
+                "generation_options": {
+                  "codecId": "pg/json@1",
+                  "dataType": "pg/json",
+                  "nullable": true
+                },
                 "health_snapshot": {
                   "codecId": "pg/json@1",
                   "dataType": "pg/json",
@@ -2548,6 +2572,9 @@
               },
               "foreignKeys": [
                 {
+                  "index": {
+                    "name": "generation_requests_user_id_idx_6c952402"
+                  },
                   "onDelete": "cascade",
                   "source": {
                     "columns": [
@@ -2594,8 +2621,8 @@
             "health_profiles": {
               "checks": [
                 {
-                  "expression": "array_remove(\"allergens\"::text[], NULL) <@ ARRAY['GLUTEN', 'LACTOSE', 'LEITE', 'OVO', 'AMENDOIM', 'CASTANHAS', 'SOJA', 'PEIXE', 'CRUSTACEOS', 'GERGELIM']::text[]",
-                  "name": "health_profiles_allergens_check_541456a1",
+                  "expression": "array_remove(\"allergens\", NULL) <@ '{\"GLUTEN\",\"LACTOSE\",\"LEITE\",\"OVO\",\"AMENDOIM\",\"CASTANHAS\",\"SOJA\",\"PEIXE\",\"CRUSTACEOS\",\"GERGELIM\"}'",
+                  "name": "health_profiles_allergens_check_b46428e6",
                   "prefix": "health_profiles_allergens_check"
                 },
                 {
@@ -2604,8 +2631,8 @@
                   "prefix": "health_profiles_allergens_elem_not_null"
                 },
                 {
-                  "expression": "array_remove(\"conditions\"::text[], NULL) <@ ARRAY['DIABETES_TIPO_1', 'DIABETES_TIPO_2', 'PRE_DIABETES', 'HIPERTENSAO', 'COLESTEROL_ALTO', 'DOENCA_RENAL', 'DOENCA_CELIACA', 'INTOLERANCIA_LACTOSE', 'GOTA', 'GASTRITE_REFLUXO']::text[]",
-                  "name": "health_profiles_conditions_check_c1aeaad3",
+                  "expression": "array_remove(\"conditions\", NULL) <@ '{\"DIABETES_TIPO_1\",\"DIABETES_TIPO_2\",\"PRE_DIABETES\",\"HIPERTENSAO\",\"COLESTEROL_ALTO\",\"DOENCA_RENAL\",\"DOENCA_CELIACA\",\"INTOLERANCIA_LACTOSE\",\"GOTA\",\"GASTRITE_REFLUXO\"}'",
+                  "name": "health_profiles_conditions_check_00d961c2",
                   "prefix": "health_profiles_conditions_check"
                 },
                 {
@@ -2614,8 +2641,8 @@
                   "prefix": "health_profiles_conditions_elem_not_null"
                 },
                 {
-                  "expression": "array_remove(\"dietary_preferences\"::text[], NULL) <@ ARRAY['VEGETARIANO', 'VEGANO', 'SEM_CARNE_VERMELHA', 'SEM_PORCO', 'LOW_CARB', 'ALTA_PROTEINA']::text[]",
-                  "name": "health_profiles_dietary_preferences_check_44038eb5",
+                  "expression": "array_remove(\"dietary_preferences\", NULL) <@ '{\"VEGETARIANO\",\"VEGANO\",\"SEM_CARNE_VERMELHA\",\"SEM_PORCO\",\"LOW_CARB\",\"ALTA_PROTEINA\"}'",
+                  "name": "health_profiles_dietary_preferences_check_2577d58d",
                   "prefix": "health_profiles_dietary_preferences_check"
                 },
                 {
@@ -2712,6 +2739,10 @@
                 "updated_at": {
                   "codecId": "pg/timestamptz-date@1",
                   "dataType": "pg/timestamptz",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
                   "nullable": false
                 },
                 "user_id": {
@@ -2722,6 +2753,11 @@
               },
               "foreignKeys": [
                 {
+                  "index": {
+                    "unique": [
+                      "user_id"
+                    ]
+                  },
                   "onDelete": "cascade",
                   "source": {
                     "columns": [
@@ -2761,8 +2797,8 @@
                   "prefix": "ingredients_aliases_elem_not_null"
                 },
                 {
-                  "expression": "array_remove(\"allergens\"::text[], NULL) <@ ARRAY['GLUTEN', 'LACTOSE', 'LEITE', 'OVO', 'AMENDOIM', 'CASTANHAS', 'SOJA', 'PEIXE', 'CRUSTACEOS', 'GERGELIM']::text[]",
-                  "name": "ingredients_allergens_check_541456a1",
+                  "expression": "array_remove(\"allergens\", NULL) <@ '{\"GLUTEN\",\"LACTOSE\",\"LEITE\",\"OVO\",\"AMENDOIM\",\"CASTANHAS\",\"SOJA\",\"PEIXE\",\"CRUSTACEOS\",\"GERGELIM\"}'",
+                  "name": "ingredients_allergens_check_b46428e6",
                   "prefix": "ingredients_allergens_check"
                 },
                 {
@@ -2947,10 +2983,20 @@
               "foreignKeys": [],
               "indexes": [
                 {
-                  "expression": "to_tsvector('portuguese', \"name\")",
-                  "name": "ingredient_name_search_f619d6de",
+                  "columns": [
+                    "name"
+                  ],
+                  "name": "ingredient_name_search_ce67deb5",
+                  "options": {
+                    "language": "portuguese",
+                    "weightGroups": [
+                      [
+                        "name"
+                      ]
+                    ]
+                  },
                   "prefix": "ingredient_name_search",
-                  "type": "gin",
+                  "type": "fullText",
                   "unique": false
                 },
                 {
@@ -3031,6 +3077,10 @@
                 "updated_at": {
                   "codecId": "pg/timestamptz-date@1",
                   "dataType": "pg/timestamptz",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
                   "nullable": false
                 },
                 "user_id": {
@@ -3041,6 +3091,9 @@
               },
               "foreignKeys": [
                 {
+                  "index": {
+                    "name": "pantry_item_user_id_idx_6c952402"
+                  },
                   "onDelete": "cascade",
                   "source": {
                     "columns": [
@@ -3058,7 +3111,10 @@
                   }
                 },
                 {
-                  "onDelete": "restrict",
+                  "index": {
+                    "name": "pantry_item_ingredient_id_idx_30032a11"
+                  },
+                  "onDelete": "setNull",
                   "source": {
                     "columns": [
                       "ingredient_id"
@@ -3153,6 +3209,9 @@
               },
               "foreignKeys": [
                 {
+                  "index": {
+                    "name": "password_reset_user_id_idx_6c952402"
+                  },
                   "onDelete": "cascade",
                   "source": {
                     "columns": [
@@ -3268,6 +3327,9 @@
               },
               "foreignKeys": [
                 {
+                  "index": {
+                    "name": "recipe_ingredients_recipe_id_idx_bc78e692"
+                  },
                   "onDelete": "cascade",
                   "source": {
                     "columns": [
@@ -3285,6 +3347,9 @@
                   }
                 },
                 {
+                  "index": {
+                    "name": "recipe_ingredients_ingredient_id_idx_30032a11"
+                  },
                   "onDelete": "setNull",
                   "source": {
                     "columns": [
@@ -3428,6 +3493,11 @@
               },
               "foreignKeys": [
                 {
+                  "index": {
+                    "unique": [
+                      "recipe_id"
+                    ]
+                  },
                   "onDelete": "cascade",
                   "source": {
                     "columns": [
@@ -3489,6 +3559,9 @@
               },
               "foreignKeys": [
                 {
+                  "index": {
+                    "name": "recipe_steps_recipe_id_idx_bc78e692"
+                  },
                   "onDelete": "cascade",
                   "source": {
                     "columns": [
@@ -3606,6 +3679,10 @@
                 "updated_at": {
                   "codecId": "pg/timestamptz-date@1",
                   "dataType": "pg/timestamptz",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
                   "nullable": false
                 },
                 "user_id": {
@@ -3616,6 +3693,9 @@
               },
               "foreignKeys": [
                 {
+                  "index": {
+                    "name": "recipes_user_id_idx_6c952402"
+                  },
                   "onDelete": "cascade",
                   "source": {
                     "columns": [
@@ -3633,6 +3713,11 @@
                   }
                 },
                 {
+                  "index": {
+                    "unique": [
+                      "generation_request_id"
+                    ]
+                  },
                   "onDelete": "setNull",
                   "source": {
                     "columns": [
@@ -3726,6 +3811,9 @@
               },
               "foreignKeys": [
                 {
+                  "index": {
+                    "name": "refresh_tokens_user_id_idx_6c952402"
+                  },
                   "onDelete": "cascade",
                   "source": {
                     "columns": [
@@ -3805,6 +3893,10 @@
                 "updated_at": {
                   "codecId": "pg/timestamptz-date@1",
                   "dataType": "pg/timestamptz",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
                   "nullable": false
                 }
               },
@@ -3914,10 +4006,10 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "9653ffa5341f408649279495833c772f0ac7e491a8a0dceb7db6e8d2fa21f81d"
+    "storageHash": "bac8a3faee75ff3acb6d8a8c18ff4198119135875d0a8dc020d168d224fceecf"
   },
   "execution": {
-    "executionHash": "48fca5ae3ca92ef3b56fa6e7239133c463b757734359a67fd12bcaa1a48d9f10",
+    "executionHash": "363f82c2637b9231f653c15c13d4df14ce23a762d2664c5392ffc634ecc63072",
     "mutations": {
       "defaults": [
         {
@@ -3955,21 +4047,6 @@
         },
         {
           "onCreate": {
-            "id": "timestampNow",
-            "kind": "generator"
-          },
-          "onUpdate": {
-            "id": "timestampNow",
-            "kind": "generator"
-          },
-          "ref": {
-            "entry": "health_profiles",
-            "field": "updated_at",
-            "namespace": "public"
-          }
-        },
-        {
-          "onCreate": {
             "id": "cuid2",
             "kind": "generator"
           },
@@ -3987,21 +4064,6 @@
           "ref": {
             "entry": "pantry_item",
             "field": "id",
-            "namespace": "public"
-          }
-        },
-        {
-          "onCreate": {
-            "id": "timestampNow",
-            "kind": "generator"
-          },
-          "onUpdate": {
-            "id": "timestampNow",
-            "kind": "generator"
-          },
-          "ref": {
-            "entry": "pantry_item",
-            "field": "updated_at",
             "namespace": "public"
           }
         },
@@ -4062,21 +4124,6 @@
         },
         {
           "onCreate": {
-            "id": "timestampNow",
-            "kind": "generator"
-          },
-          "onUpdate": {
-            "id": "timestampNow",
-            "kind": "generator"
-          },
-          "ref": {
-            "entry": "recipes",
-            "field": "updated_at",
-            "namespace": "public"
-          }
-        },
-        {
-          "onCreate": {
             "id": "cuid2",
             "kind": "generator"
           },
@@ -4094,21 +4141,6 @@
           "ref": {
             "entry": "users",
             "field": "id",
-            "namespace": "public"
-          }
-        },
-        {
-          "onCreate": {
-            "id": "timestampNow",
-            "kind": "generator"
-          },
-          "onUpdate": {
-            "id": "timestampNow",
-            "kind": "generator"
-          },
-          "ref": {
-            "entry": "users",
-            "field": "updated_at",
             "namespace": "public"
           }
         }
